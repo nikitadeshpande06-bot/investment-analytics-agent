@@ -9,7 +9,7 @@ import express from "express";
    CONFIGURATION
    ============================================================ */
 
-const HTTP_PORT = 4000;
+const HTTP_PORT = Number(process.env.PORT) ||  4000;
 
 const OLLAMA_URL = "http://127.0.0.1:11434";
 
@@ -1035,7 +1035,7 @@ async function main(): Promise<void> {
 
   app.listen(
     HTTP_PORT,
-    "127.0.0.1",
+    "0.0.0.0",
     () => {
       console.error(
         `[investment-analyst-mcp] HTTP server running on http://localhost:${HTTP_PORT}`
