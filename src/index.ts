@@ -684,7 +684,7 @@ ${disclaimer()}
 const app = express();
 
 
-const srcDir = path.join(process.cwd(), "src");
+const srcDir = process.cwd();
 
 app.use(express.static(srcDir));
 
