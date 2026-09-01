@@ -4,6 +4,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import express from "express";
+import path from "node:path";
+
 
 /* ============================================================
    CONFIGURATION
@@ -680,6 +682,15 @@ ${disclaimer()}
    ============================================================ */
 
 const app = express();
+
+
+const srcDir = path.join(process.cwd(), "src");
+
+app.use(express.static(srcDir));
+
+app.get("/", (_req, res) => {
+  res.sendFile(path.join(srcDir, "analytics-chatboy.html"));
+});
 
 /* ------------------------------------------------------------
    Middleware
