@@ -1,0 +1,803 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Investment Analyst — 5-Step Sequential Workflow</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #f7f8fa;
+    --border: #e5e7eb;
+    --text: #1f2328;
+    --muted: #57606a;
+    --accent: #3b82d4;
+    --accent-light: #eff6ff;
+    --accent-dark: #2563b0;
+    --secondary: #7c5cd8;
+    --secondary-light: #f5f3ff;
+    --green: #16a34a;
+    --green-light: #f0fdf4;
+    --amber: #d97706;
+    --amber-light: #fffbeb;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --radius: 8px;
+  }
+
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    background: var(--surface);
+    padding: 32px 16px 48px;
+  }
+
+  .page { max-width: 760px; margin: 0 auto; }
+
+  /* ── Hero ── */
+  .hero {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 36px 28px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--accent);
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-light);
+    color: var(--accent-dark);
+    border: 1px solid #bfdbfe;
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .hero p {
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 580px;
+    line-height: 1.6;
+  }
+
+  /* ── Stage overview bar ── */
+  .stages-bar {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+  .stage-chip {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 10px;
+    text-align: center;
+    cursor: default;
+  }
+  .stage-chip .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .stage-chip .label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .stage-chip .sub {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ── Section cards ── */
+  .card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .step-badge {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .card-header-text h2 {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .card-header-text span {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .card-body { padding: 18px 20px; }
+
+  /* ── Lists ── */
+  ul, ol { padding-left: 20px; }
+  li { margin-bottom: 6px; font-size: 13.5px; }
+  li strong { font-weight: 700; }
+
+  /* ── Input fields grid ── */
+  .input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .input-field {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+  }
+  .input-field .field-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 3px;
+  }
+  .input-field .field-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .input-field .field-values {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 5px;
+  }
+  .pill {
+    background: var(--accent-light);
+    color: var(--accent-dark);
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 1px 8px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  /* ── Analysis columns ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 4px;
+  }
+  .analysis-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+  .analysis-box h4 {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .analysis-box ul { padding-left: 16px; }
+  .analysis-box li { font-size: 12px; margin-bottom: 4px; color: var(--muted); }
+
+  /* ── Opportunity card template ── */
+  .opp-template {
+    background: var(--secondary-light);
+    border: 1px solid #ddd6fe;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-top: 12px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .opp-template .opp-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .opp-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-size: 12.5px;
+    margin-bottom: 4px;
+  }
+  .opp-row .opp-key {
+    font-weight: 700;
+    min-width: 100px;
+    color: var(--text);
+    flex-shrink: 0;
+  }
+  .opp-row .opp-val { color: var(--muted); }
+
+  /* ── Allocation table ── */
+  .alloc-table-wrap { overflow-x: auto; margin-top: 4px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+  thead th {
+    background: var(--surface);
+    padding: 8px 12px;
+    text-align: left;
+    border: 1px solid var(--border);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even) td { background: var(--surface); }
+  .weight-cell { font-weight: 700; color: var(--accent-dark); }
+  .note-row td { background: #fffbeb; font-size: 12px; color: var(--amber); font-style: italic; border-color: #fde68a; }
+
+  /* ── Action plan steps ── */
+  .action-steps { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+  .action-step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .action-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--accent);
+    color: var(--accent-dark);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .action-content { flex: 1; }
+  .action-content strong { font-size: 13px; display: block; margin-bottom: 2px; }
+  .action-content p { font-size: 12.5px; color: var(--muted); margin: 0; }
+
+  /* ── Ground rules ── */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .rule-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+  }
+  .rule-icon {
+    width: 20px; height: 20px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .rule-icon.no { background: var(--red-light); color: var(--red); }
+  .rule-icon.yes { background: var(--green-light); color: var(--green); }
+  .rule-icon.warn { background: var(--amber-light); color: var(--amber); }
+  .rule-text { font-size: 12px; color: var(--text); line-height: 1.5; }
+  .rule-text strong { display: block; font-size: 12px; margin-bottom: 2px; }
+
+  /* ── Disclaimer ── */
+  .disclaimer-box {
+    background: var(--amber-light);
+    border: 1px solid #fde68a;
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    font-size: 12px;
+    color: #92400e;
+    line-height: 1.6;
+  }
+  .disclaimer-box strong { font-size: 12px; display: block; margin-bottom: 4px; }
+
+  /* ── Trigger phrases ── */
+  .triggers { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .trigger-tag {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 3px 10px;
+    font-size: 11.5px;
+    color: var(--muted);
+  }
+
+  /* ── Divider label ── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 28px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Footer ── */
+  .page-footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 560px) {
+    .stages-bar { grid-template-columns: repeat(3, 1fr); }
+    .input-grid, .two-col, .rules-grid { grid-template-columns: 1fr; }
+    .hero { padding: 24px 20px 20px; }
+    .card-body { padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  
+  <div class="hero">
+    <div class="hero-badge">Sequential Task Agent</div>
+    <h1>Investment Analyst</h1>
+    <p>A structured, five-step workflow for guiding investment decisions — from profiling investor goals to delivering a concrete portfolio allocation and action plan.</p>
+  </div>
+
+  
+  <div class="stages-bar">
+    <div class="stage-chip">
+      <div class="num">1</div>
+      <div class="label">Profile Gathering</div>
+      <div class="sub">Goals &amp; constraints</div>
+    </div>
+    <div class="stage-chip">
+      <div class="num">2</div>
+      <div class="label">Market Analysis</div>
+      <div class="sub">Macro &amp; sectors</div>
+    </div>
+    <div class="stage-chip">
+      <div class="num">3</div>
+      <div class="label">Opportunity Eval</div>
+      <div class="sub">Fundamentals &amp; themes</div>
+    </div>
+    <div class="stage-chip">
+      <div class="num">4</div>
+      <div class="label">Portfolio</div>
+      <div class="sub">Allocation table</div>
+    </div>
+    <div class="stage-chip">
+      <div class="num">5</div>
+      <div class="label">Action Plan</div>
+      <div class="sub">Entry &amp; monitoring</div>
+    </div>
+  </div>
+
+  
+  <div class="card">
+    <div class="card-header">
+      <div class="step-badge">1</div>
+      <div class="card-header-text">
+        <h2>Profile Gathering</h2>
+        <span>Collect the investor's full profile before any analysis begins</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="input-grid">
+        <div class="input-field">
+          <div class="field-name">Goals</div>
+          <div class="field-desc">What is the money for?</div>
+          <div class="field-values">
+            <span class="pill">Retirement</span>
+            <span class="pill">College fund</span>
+            <span class="pill">Wealth growth</span>
+            <span class="pill">Income</span>
+          </div>
+        </div>
+        <div class="input-field">
+          <div class="field-name">Budget</div>
+          <div class="field-desc">Total investable amount in USD</div>
+        </div>
+        <div class="input-field">
+          <div class="field-name">Risk Tolerance</div>
+          <div class="field-desc">Investor's appetite for volatility</div>
+          <div class="field-values">
+            <span class="pill">Conservative</span>
+            <span class="pill">Moderate</span>
+            <span class="pill">Aggressive</span>
+          </div>
+        </div>
+        <div class="input-field">
+          <div class="field-name">Time Horizon</div>
+          <div class="field-desc">How long before funds are needed</div>
+          <div class="field-values">
+            <span class="pill">Short &lt;2yr</span>
+            <span class="pill">Medium 2–7yr</span>
+            <span class="pill">Long &gt;7yr</span>
+          </div>
+        </div>
+        <div class="input-field">
+          <div class="field-name">Current Holdings</div>
+          <div class="field-desc">Existing positions to account for or build around</div>
+        </div>
+        <div class="input-field">
+          <div class="field-name">Exclusions</div>
+          <div class="field-desc">Sectors or asset types to avoid</div>
+          <div class="field-values">
+            <span class="pill">e.g. Tobacco</span>
+            <span class="pill">Crypto</span>
+            <span class="pill">Weapons</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="card">
+    <div class="card-header">
+      <div class="step-badge">2</div>
+      <div class="card-header-text">
+        <h2>Market Analysis</h2>
+        <span>Analyse the macro and sector environment relevant to the profile</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <ul style="margin-bottom:12px">
+        <li>Identify the current <strong>macro regime</strong> — growth/recession risk, inflation trend, rate environment</li>
+        <li>List <strong>3–5 asset classes or sectors</strong> with tailwinds matching the time horizon and risk tolerance</li>
+        <li>Flag notable <strong>headwinds</strong> — rate sensitivity for bonds, valuation stretch in equities, etc.</li>
+        <li>Summarise in 3–5 concise bullet points — no fabricated statistics</li>
+      </ul>
+      <div class="two-col">
+        <div class="analysis-box">
+          <h4>Tailwind examples</h4>
+          <ul>
+            <li>Rate cuts → bond price appreciation</li>
+            <li>AI capex cycle → tech &amp; infrastructure</li>
+            <li>Ageing demographics → healthcare</li>
+            <li>Energy transition → renewables/utilities</li>
+            <li>Emerging market growth → EM equities</li>
+          </ul>
+        </div>
+        <div class="analysis-box">
+          <h4>Headwind examples</h4>
+          <ul>
+            <li>Elevated valuations → stretched P/E</li>
+            <li>Rising rates → duration risk in bonds</li>
+            <li>Geopolitical risk → commodity volatility</li>
+            <li>Credit tightening → small-cap stress</li>
+            <li>Stagflation → equity/bond correlation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="card">
+    <div class="card-header">
+      <div class="step-badge">3</div>
+      <div class="card-header-text">
+        <h2>Opportunity Evaluation</h2>
+        <span>Apply fundamental and thematic analysis to each shortlisted asset</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="two-col">
+        <div class="analysis-box">
+          <h4>Fundamental Analysis</h4>
+          <ul>
+            <li>Valuation — P/E, P/B, EV/EBITDA vs. history/peers</li>
+            <li>Earnings or income growth outlook</li>
+            <li>Debt level / balance sheet quality</li>
+            <li>Competitive moat or structural advantage</li>
+          </ul>
+        </div>
+        <div class="analysis-box">
+          <h4>Technical / Thematic Overlay</h4>
+          <ul>
+            <li>Trend direction — bull / bear / neutral</li>
+            <li>Key thematic tailwinds (AI, demographics, energy)</li>
+            <li>Momentum and support levels (where relevant)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="opp-template">
+        <div class="opp-label">Output format per opportunity</div>
+        <div class="opp-row">
+          <div class="opp-key">Asset / Vehicle</div>
+          <div class="opp-val">e.g. VTI — Vanguard Total Stock Market ETF</div>
+        </div>
+        <div class="opp-row">
+          <div class="opp-key">Thesis</div>
+          <div class="opp-val">2-sentence investment rationale tied to macro and fundamentals</div>
+        </div>
+        <div class="opp-row">
+          <div class="opp-key">Return range</div>
+          <div class="opp-val">Estimated annualised range — e.g. 7–10% p.a. (not a guarantee)</div>
+        </div>
+        <div class="opp-row">
+          <div class="opp-key">Top 2 risks</div>
+          <div class="opp-val">Specific downside scenarios for this asset</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="card">
+    <div class="card-header">
+      <div class="step-badge">4</div>
+      <div class="card-header-text">
+        <h2>Portfolio Recommendation</h2>
+        <span>Diversified allocation table with weights summing to 100%</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="alloc-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Asset Class</th>
+              <th>Vehicle (ETF / fund)</th>
+              <th>Weight %</th>
+              <th>USD Amount*</th>
+              <th>Rationale</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>US Equities</td>
+              <td>VTI / SPY</td>
+              <td class="weight-cell">40%</td>
+              <td>$40,000</td>
+              <td>Core growth driver, liquid, low cost</td>
+            </tr>
+            <tr>
+              <td>International Equities</td>
+              <td>VXUS / EFA</td>
+              <td class="weight-cell">20%</td>
+              <td>$20,000</td>
+              <td>Geographic diversification, valuation discount to US</td>
+            </tr>
+            <tr>
+              <td>Bonds / Fixed Income</td>
+              <td>BND / AGG</td>
+              <td class="weight-cell">25%</td>
+              <td>$25,000</td>
+              <td>Stability, income, low correlation to equities</td>
+            </tr>
+            <tr>
+              <td>REITs</td>
+              <td>VNQ / SCHH</td>
+              <td class="weight-cell">10%</td>
+              <td>$10,000</td>
+              <td>Inflation hedge, income, real asset exposure</td>
+            </tr>
+            <tr>
+              <td>Cash / Money Market</td>
+              <td>SGOV / T-bills</td>
+              <td class="weight-cell">5%</td>
+              <td>$5,000</td>
+              <td>Liquidity buffer, opportunity fund</td>
+            </tr>
+            <tr class="note-row">
+              <td colspan="5">* Example based on $100,000 budget. Actual amounts scale proportionally. Weights must sum to 100%.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:12px;font-size:12.5px;color:var(--muted)">
+        Explain diversification rationale covering: geography, sector, duration, correlation. Call out any deliberate tilt (e.g. overweight value for a conservative profile).
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="card">
+    <div class="card-header">
+      <div class="step-badge">5</div>
+      <div class="card-header-text">
+        <h2>Action Plan</h2>
+        <span>Concrete, prioritised steps for execution and ongoing management</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="action-steps">
+        <div class="action-step">
+          <div class="action-num">1</div>
+          <div class="action-content">
+            <strong>Entry Strategy</strong>
+            <p>Lump-sum vs. dollar-cost averaging (DCA). Recommend DCA intervals (weekly/monthly) when lump-sum timing risk is a concern or markets appear elevated.</p>
+          </div>
+        </div>
+        <div class="action-step">
+          <div class="action-num">2</div>
+          <div class="action-content">
+            <strong>Position Sizing</strong>
+            <p>Order of execution — largest and most liquid positions first. Ensures core portfolio is established before smaller satellite positions.</p>
+          </div>
+        </div>
+        <div class="action-step">
+          <div class="action-num">3</div>
+          <div class="action-content">
+            <strong>Rebalancing</strong>
+            <p>Threshold trigger: ±5% drift from target weight. Calendar schedule: semi-annual or annual review, whichever comes first.</p>
+          </div>
+        </div>
+        <div class="action-step">
+          <div class="action-num">4</div>
+          <div class="action-content">
+            <strong>Risk Management</strong>
+            <p>Stop-loss levels, maximum drawdown rules, and tail-risk hedges tailored to the investor's risk tolerance and time horizon.</p>
+          </div>
+        </div>
+        <div class="action-step">
+          <div class="action-num">5</div>
+          <div class="action-content">
+            <strong>Monitoring Schedule</strong>
+            <p>Monthly: macro/news scan. Quarterly: allocation drift check. Annual: full rebalance and goal reassessment.</p>
+          </div>
+        </div>
+        <div class="action-step">
+          <div class="action-num">6</div>
+          <div class="action-content">
+            <strong>Professional Referral</strong>
+            <p>If tax optimisation, estate planning, or complex legal structures are relevant — recommend a qualified financial adviser or tax professional.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section-label">Ground Rules</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="rules-grid">
+        <div class="rule-item">
+          <div class="rule-icon no">✕</div>
+          <div class="rule-text"><strong>Never fabricate data</strong>Do not invent prices, earnings figures, index levels, or market statistics. Reason from general knowledge and principles only.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-icon no">✕</div>
+          <div class="rule-text"><strong>Never guarantee returns</strong>Frame all return estimates as ranges with explicit uncertainty. Use language like "estimated" and "not a guarantee".</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-icon yes">✓</div>
+          <div class="rule-text"><strong>Always include a disclaimer</strong>Append a standard risk disclaimer to every portfolio and action plan response.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-icon yes">✓</div>
+          <div class="rule-text"><strong>Encourage diversification</strong>Warn against over-concentration in any single asset, sector, or geography.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-icon no">✕</div>
+          <div class="rule-text"><strong>No PII solicitation</strong>Do not ask for account numbers, tax IDs, Social Security numbers, or passwords.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-icon warn">!</div>
+          <div class="rule-text"><strong>Refer out-of-scope questions</strong>Legal, tax law specifics, estate planning — redirect to a qualified professional.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section-label">Skill Activation Triggers</div>
+  <div class="card">
+    <div class="card-body">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:10px">This skill auto-activates when a user's message contains phrases related to any of the following topics:</div>
+      <div class="triggers">
+        <span class="trigger-tag">investments</span>
+        <span class="trigger-tag">portfolio planning</span>
+        <span class="trigger-tag">asset allocation</span>
+        <span class="trigger-tag">risk evaluation</span>
+        <span class="trigger-tag">retirement savings</span>
+        <span class="trigger-tag">stock screening</span>
+        <span class="trigger-tag">market analysis</span>
+        <span class="trigger-tag">build a portfolio</span>
+        <span class="trigger-tag">dividend income</span>
+        <span class="trigger-tag">ETF recommendations</span>
+        <span class="trigger-tag">inflation hedge</span>
+        <span class="trigger-tag">rebalancing</span>
+        <span class="trigger-tag">DCA strategy</span>
+        <span class="trigger-tag">lump-sum investing</span>
+        <span class="trigger-tag">risk tolerance</span>
+        <span class="trigger-tag">time horizon</span>
+        <span class="trigger-tag">emerging markets</span>
+        <span class="trigger-tag">REITs</span>
+        <span class="trigger-tag">bond allocation</span>
+        <span class="trigger-tag">investment decision</span>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:var(--muted)">
+        Can also be invoked manually with <code style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:1px 6px;font-family:monospace">/investment-analyst</code> in any conversation.
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="disclaimer-box" style="margin-top:24px">
+    <strong>Standard Disclaimer (appended to every portfolio &amp; action plan)</strong>
+    This is for informational purposes only, not personalised financial advice. All investing involves risk of loss. Past performance is not indicative of future results. The information provided is based on general knowledge and does not account for your individual tax situation, legal circumstances, or complete financial picture. Consult a qualified financial adviser before making investment decisions.
+  </div>
+
+  <div class="page-footer">
+    Investment Analyst — Sequential Task Agent  |  Skill: <code>.bob/skills/investment-analyst/SKILL.md</code>  |  <span style="color:#3b82d4">Made with IBM Bob</span>
+  </div>
+
+</div>
+</body>
+</html>

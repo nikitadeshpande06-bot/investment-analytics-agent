@@ -1,0 +1,1946 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="description"
+    content="Local Investment Analytics Dashboard with portfolio analysis, risk evaluation, market screening and future projections.">
+
+  <title>Investment Analytics Dashboard</title>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- =========================================================
+         APPLICATION
+    ========================================================== -->
+
+  <div class="app-container">
+
+    <!-- =====================================================
+             SIDEBAR
+        ====================================================== -->
+
+    <aside class="sidebar" id="sidebar">
+
+      <div class="sidebar-header">
+
+        <div class="brand-icon">
+          📊
+        </div>
+
+        <div class="brand-text">
+
+          <h1>InvestAI</h1>
+
+          <span>
+            Local Analytics
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <nav class="sidebar-nav">
+
+        <button class="nav-item active" data-section="dashboard" type="button">
+          <span class="nav-icon">🏠</span>
+          <span>Dashboard</span>
+        </button>
+
+
+        <button class="nav-item" data-section="portfolio" type="button">
+          <span class="nav-icon">💼</span>
+          <span>Portfolio Builder</span>
+        </button>
+
+
+        <button class="nav-item" data-section="risk" type="button">
+          <span class="nav-icon">⚠️</span>
+          <span>Risk Evaluator</span>
+        </button>
+
+
+        <button class="nav-item" data-section="screener" type="button">
+          <span class="nav-icon">🔎</span>
+          <span>Market Screener</span>
+        </button>
+
+
+        <button class="nav-item" data-section="prediction" type="button">
+          <span class="nav-icon">📈</span>
+          <span>Future Projection</span>
+        </button>
+
+
+        <button class="nav-item" data-section="chat" type="button">
+          <span class="nav-icon">💬</span>
+          <span>Analytics Chat</span>
+        </button>
+
+        <button class="nav-item" data-section="history" type="button">
+          <span class="nav-icon">🕘</span>
+          <span>History</span>
+        </button>
+
+
+        <button class="nav-item" data-section="reports" type="button">
+          <span class="nav-icon">📄</span>
+          <span>Reports</span>
+        </button>
+
+      </nav>
+
+
+      <div class="sidebar-footer">
+
+        <div class="local-status">
+
+          <span class="status-dot"></span>
+
+          <div>
+
+            <strong>
+              Local Mode
+            </strong>
+
+            <small>
+              No API required
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <button class="clear-data-btn" id="clearDataBtn" type="button">
+          🗑️ Clear Saved Data
+        </button>
+
+      </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+             MAIN CONTENT
+        ====================================================== -->
+
+    <main class="main-content">
+
+      <!-- =================================================
+                 TOP BAR
+            ================================================== -->
+
+      <header class="topbar">
+
+        <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Open menu">
+          ☰
+        </button>
+
+
+        <div class="page-heading">
+
+          <h2 id="pageTitle">
+            Investment Dashboard
+          </h2>
+
+          <p id="pageSubtitle">
+            Analyze your investments locally.
+          </p>
+
+        </div>
+
+
+        <div class="topbar-actions">
+
+          <button class="theme-btn" id="themeToggle" type="button" aria-label="Toggle dark and light mode">
+            🌙
+          </button>
+
+
+          <button class="export-btn" id="exportReportBtn" type="button">
+            📥 Export Report
+          </button>
+
+        </div>
+
+      </header>
+
+
+      <!-- =================================================
+                 DASHBOARD
+            ================================================== -->
+
+      <section class="content-section active" id="dashboardSection">
+
+        <div class="welcome-card">
+
+          <div>
+
+            <span class="eyebrow">
+              LOCAL INVESTMENT ANALYTICS
+            </span>
+
+
+
+
+
+            <p>
+              Build portfolios, evaluate risk,
+              screen investment categories and
+              generate illustrative future
+              projections directly in your browser.
+            </p>
+
+          </div>
+
+
+          <div class="welcome-icon">
+            📈
+          </div>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="stats-grid">
+
+          <div class="stat-card">
+
+            <div class="stat-icon">
+              💰
+            </div>
+
+            <div>
+
+              <span>
+                Total Budget
+              </span>
+
+              <strong id="statBudget">
+                $0.00
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-icon">
+              ⚖️
+            </div>
+
+            <div>
+
+              <span>
+                Risk Score
+              </span>
+
+              <strong id="statRisk">
+                -
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-icon">
+              📊
+            </div>
+
+            <div>
+
+              <span>
+                Risk Rating
+              </span>
+
+              <strong id="statRating">
+                Not Evaluated
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-icon">
+              📈
+            </div>
+
+            <div>
+
+              <span>
+                Projection
+              </span>
+
+              <strong id="statProjection">
+                -
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- QUICK ACTIONS -->
+
+        <div class="section-heading">
+
+          <div>
+
+            <h3>
+              Quick Actions
+            </h3>
+
+            <p>
+              Start analyzing your investments.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="quick-actions">
+
+          <button class="quick-action-card" data-section="portfolio" type="button">
+
+            <span class="quick-icon">
+              💼
+            </span>
+
+            <strong>
+              Build Portfolio
+            </strong>
+
+            <small>
+              Create a diversified allocation.
+            </small>
+
+          </button>
+
+
+          <button class="quick-action-card" data-section="risk" type="button">
+
+            <span class="quick-icon">
+              ⚠️
+            </span>
+
+            <strong>
+              Evaluate Risk
+            </strong>
+
+            <small>
+              Analyze portfolio risk.
+            </small>
+
+          </button>
+
+
+          <button class="quick-action-card" data-section="screener" type="button">
+
+            <span class="quick-icon">
+              🔎
+            </span>
+
+            <strong>
+              Screen Markets
+            </strong>
+
+            <small>
+              Analyze investment categories.
+            </small>
+
+          </button>
+
+
+          <button class="quick-action-card" data-section="prediction" type="button">
+
+            <span class="quick-icon">
+              📈
+            </span>
+
+            <strong>
+              Future Projection
+            </strong>
+
+            <small>
+              View an illustrative growth projection.
+            </small>
+
+          </button>
+
+
+          <button class="quick-action-card" data-section="chat" type="button">
+
+            <span class="quick-icon">
+              💬
+            </span>
+
+            <strong>
+              Ask Analytics
+            </strong>
+
+            <small>
+              Get local rule-based insights.
+            </small>
+
+          </button>
+
+        </div>
+
+
+        <!-- FEATURES -->
+
+        <div class="section-heading">
+
+          <div>
+
+            <h3>
+              System Features
+            </h3>
+
+            <p>
+              Everything runs locally in your browser.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="features-grid">
+
+          <div class="feature-card">
+
+            <span>🚫</span>
+
+            <h4>
+              No Groq API
+            </h4>
+
+            <p>
+              No GROQ_API_KEY is required.
+            </p>
+
+          </div>
+
+
+          <div class="feature-card">
+
+            <span>💾</span>
+
+            <h4>
+              Local Storage
+            </h4>
+
+            <p>
+              Data remains after refreshing.
+            </p>
+
+          </div>
+
+
+          <div class="feature-card">
+
+            <span>📄</span>
+
+            <h4>
+              Export Reports
+            </h4>
+
+            <p>
+              Download analysis as a text report.
+            </p>
+
+          </div>
+
+
+          <div class="feature-card">
+
+            <span>📱</span>
+
+            <h4>
+              Responsive
+            </h4>
+
+            <p>
+              Desktop, tablet and mobile support.
+            </p>
+
+          </div>
+
+
+          <div class="feature-card">
+
+            <span>📈</span>
+
+            <h4>
+              Future Projection
+            </h4>
+
+            <p>
+              Generate an illustrative projection
+              from your analysis.
+            </p>
+
+          </div>
+
+
+          <div class="feature-card">
+
+            <span>🔒</span>
+
+            <h4>
+              Local Processing
+            </h4>
+
+            <p>
+              No external AI service is required.
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+                 PORTFOLIO BUILDER
+            ================================================== -->
+
+      <section class="content-section" id="portfolioSection">
+
+        <div class="section-heading">
+
+          <div>
+
+            <span class="eyebrow">
+              PORTFOLIO BUILDER
+            </span>
+
+            <h2>
+              Build Your Investment Portfolio
+            </h2>
+
+            <p>
+              Create a rule-based diversified allocation.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="two-column-layout">
+
+          <!-- FORM -->
+
+          <div class="panel">
+
+            <div class="panel-header">
+
+              <h3>
+                Portfolio Details
+              </h3>
+
+            </div>
+
+
+            <form id="portfolioForm">
+
+              <div class="form-group">
+
+                <label for="budget">
+                  Investment Budget
+                </label>
+
+                <div class="input-with-prefix">
+
+                  <span>
+                    $
+                  </span>
+
+                  <input type="number" id="budget" min="1" step="0.01" placeholder="10000" required>
+
+                </div>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="portfolioRisk">
+                  Risk Tolerance
+                </label>
+
+                <select id="portfolioRisk" required>
+
+                  <option value="">
+                    Select risk tolerance
+                  </option>
+
+                  <option value="conservative">
+                    Conservative
+                  </option>
+
+                  <option value="moderate">
+                    Moderate
+                  </option>
+
+                  <option value="aggressive">
+                    Aggressive
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="timeHorizon">
+                  Time Horizon
+                </label>
+
+                <input type="number" id="timeHorizon" min="1" max="50" step="1" placeholder="10" required>
+
+                <small>
+                  Years
+                </small>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="investmentGoal">
+                  Investment Goal
+                </label>
+
+                <textarea id="investmentGoal" rows="3" placeholder="Example: Long-term wealth creation"
+                  required></textarea>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="existingHoldings">
+                  Existing Holdings
+                </label>
+
+                <textarea id="existingHoldings" rows="3"
+                  placeholder="Example: Stocks, bonds, mutual funds..."></textarea>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="excludedSectors">
+                  Excluded Sectors
+                </label>
+
+                <input type="text" id="excludedSectors" placeholder="Example: Tobacco, weapons">
+
+              </div>
+
+
+              <button class="primary-btn" type="submit">
+                📊 Build Portfolio
+              </button>
+
+            </form>
+
+          </div>
+
+
+          <!-- RESULT -->
+
+          <div class="panel result-panel">
+
+            <div class="panel-header">
+
+              <h3>
+                Portfolio Analysis
+              </h3>
+
+              <span class="result-status" id="portfolioStatus">
+                Ready
+              </span>
+
+            </div>
+
+
+            <div id="portfolioResult" class="result-content empty-result">
+
+              <div class="empty-icon">
+                📊
+              </div>
+
+              <p>
+                Enter your portfolio details
+                to generate an allocation.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PORTFOLIO GRAPH -->
+
+        <div class="panel chart-panel" id="portfolioChartPanel">
+
+          <div class="panel-header">
+
+            <div>
+
+              <h3>
+                Portfolio Allocation
+              </h3>
+
+              <p>
+                Visual representation of your
+                suggested allocation.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div id="portfolioChart" class="chart-container">
+
+            <div class="chart-placeholder">
+
+              <span>
+                📊
+              </span>
+
+              <p>
+                Build a portfolio to generate
+                the allocation chart.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+                 RISK EVALUATOR
+            ================================================== -->
+
+      <section class="content-section" id="riskSection">
+
+        <div class="section-heading">
+
+          <div>
+
+            <span class="eyebrow">
+              RISK EVALUATOR
+            </span>
+
+            <h2>
+              Evaluate Portfolio Risk
+            </h2>
+
+            <p>
+              Analyze potential investment risks.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="two-column-layout">
+
+          <div class="panel">
+
+            <div class="panel-header">
+
+              <h3>
+                Risk Information
+              </h3>
+
+            </div>
+
+
+            <form id="riskForm">
+
+              <div class="form-group">
+
+                <label for="portfolioDescription">
+                  Portfolio Description
+                </label>
+
+                <textarea id="portfolioDescription" rows="5" placeholder="Describe your current portfolio..."
+                  required></textarea>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="investorRisk">
+                  Investor Risk Tolerance
+                </label>
+
+                <select id="investorRisk" required>
+
+                  <option value="">
+                    Select risk tolerance
+                  </option>
+
+                  <option value="conservative">
+                    Conservative
+                  </option>
+
+                  <option value="moderate">
+                    Moderate
+                  </option>
+
+                  <option value="aggressive">
+                    Aggressive
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="riskTimeHorizon">
+                  Time Horizon
+                </label>
+
+                <input type="number" id="riskTimeHorizon" min="1" max="50" placeholder="10" required>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="marketContext">
+                  Market Context
+                </label>
+
+                <textarea id="marketContext" rows="3" placeholder="Optional market information..."></textarea>
+
+              </div>
+
+
+              <button class="primary-btn" type="submit">
+                ⚠️ Evaluate Risk
+              </button>
+
+            </form>
+
+          </div>
+
+
+          <div class="panel result-panel">
+
+            <div class="panel-header">
+
+              <h3>
+                Risk Analysis
+              </h3>
+
+              <span class="result-status" id="riskStatus">
+                Ready
+              </span>
+
+            </div>
+
+
+            <div id="riskResult" class="result-content empty-result">
+
+              <div class="empty-icon">
+                ⚖️
+              </div>
+
+              <p>
+                Submit the form to evaluate
+                your portfolio risk.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- RISK VISUALIZATION -->
+
+        <div class="panel chart-panel" id="riskChartPanel">
+
+          <div class="panel-header">
+
+            <div>
+
+              <h3>
+                Risk Profile
+              </h3>
+
+              <p>
+                Visual representation of the
+                calculated risk score.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div id="riskChart" class="chart-container">
+
+            <div class="chart-placeholder">
+
+              <span>
+                ⚖️
+              </span>
+
+              <p>
+                Evaluate your portfolio to
+                generate the risk visualization.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+                 MARKET SCREENER
+            ================================================== -->
+
+      <section class="content-section" id="screenerSection">
+
+        <div class="section-heading">
+
+          <div>
+
+            <span class="eyebrow">
+              MARKET SCREENER
+            </span>
+
+            <h2>
+              Investment Category Screener
+            </h2>
+
+            <p>
+              Screen categories using local
+              rule-based analysis.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="panel">
+
+          <form id="screenerForm">
+
+            <div class="form-group">
+
+              <label>
+                Asset Classes
+              </label>
+
+
+              <div class="checkbox-grid">
+
+                <label class="checkbox-item">
+
+                  <input type="checkbox" name="assetClass" value="US equities">
+
+                  <span>
+                    US Equities
+                  </span>
+
+                </label>
+
+
+                <label class="checkbox-item">
+
+                  <input type="checkbox" name="assetClass" value="international equities">
+
+                  <span>
+                    International Equities
+                  </span>
+
+                </label>
+
+
+                <label class="checkbox-item">
+
+                  <input type="checkbox" name="assetClass" value="emerging markets">
+
+                  <span>
+                    Emerging Markets
+                  </span>
+
+                </label>
+
+
+                <label class="checkbox-item">
+
+                  <input type="checkbox" name="assetClass" value="bonds">
+
+                  <span>
+                    Bonds
+                  </span>
+
+                </label>
+
+
+                <label class="checkbox-item">
+
+                  <input type="checkbox" name="assetClass" value="REITs">
+
+                  <span>
+                    REITs
+                  </span>
+
+                </label>
+
+
+                <label class="checkbox-item">
+
+                  <input type="checkbox" name="assetClass" value="commodities">
+
+                  <span>
+                    Commodities
+                  </span>
+
+                </label>
+
+
+                <label class="checkbox-item">
+
+                  <input type="checkbox" name="assetClass" value="ETFs">
+
+                  <span>
+                    ETFs
+                  </span>
+
+                </label>
+
+
+                <label class="checkbox-item">
+
+                  <input type="checkbox" name="assetClass" value="crypto">
+
+                  <span>
+                    Crypto
+                  </span>
+
+                </label>
+
+
+                <label class="checkbox-item">
+
+                  <input type="checkbox" name="assetClass" value="cash equivalents">
+
+                  <span>
+                    Cash Equivalents
+                  </span>
+
+                </label>
+
+              </div>
+
+            </div>
+
+
+            <div class="form-grid">
+
+              <div class="form-group">
+
+                <label for="screenerSectors">
+                  Sectors
+                </label>
+
+                <input type="text" id="screenerSectors" placeholder="Technology, Healthcare...">
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="screenerRisk">
+                  Risk Tolerance
+                </label>
+
+                <select id="screenerRisk">
+
+                  <option value="conservative">
+                    Conservative
+                  </option>
+
+                  <option value="moderate" selected>
+                    Moderate
+                  </option>
+
+                  <option value="aggressive">
+                    Aggressive
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="screenerHorizon">
+                  Time Horizon
+                </label>
+
+                <input type="number" id="screenerHorizon" min="1" value="10">
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="investmentThemes">
+                  Investment Themes
+                </label>
+
+                <input type="text" id="investmentThemes" placeholder="Growth, income...">
+
+              </div>
+
+            </div>
+
+
+            <button class="primary-btn" type="submit">
+              🔎 Run Screener
+            </button>
+
+          </form>
+
+        </div>
+
+
+        <div class="panel result-panel screener-result-panel">
+
+          <div class="panel-header">
+
+            <h3>
+              Screening Results
+            </h3>
+
+            <span class="result-status" id="screenerStatus">
+              Ready
+            </span>
+
+          </div>
+
+
+          <div id="screenerResult" class="result-content empty-result">
+
+            <div class="empty-icon">
+              🔎
+            </div>
+
+            <p>
+              Select asset classes and run
+              the screener.
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+                 FUTURE PROJECTION
+            ================================================== -->
+
+      <section class="content-section" id="predictionSection">
+
+        <div class="section-heading">
+
+          <div>
+
+            <span class="eyebrow">
+              FUTURE PROJECTION
+            </span>
+
+            <h2>
+              Investment Growth Projection
+            </h2>
+
+            <p>
+              Generate an illustrative future
+              projection from your portfolio inputs.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- DISCLAIMER -->
+
+        <div class="notice-card">
+
+          <span class="notice-icon">
+            ℹ️
+          </span>
+
+          <div>
+
+            <strong>
+              Important
+            </strong>
+
+            <p>
+              This projection is an educational,
+              rule-based estimate. It does not use
+              live market data and is not a guaranteed
+              prediction of future returns.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- PREDICTION FORM -->
+
+        <div class="two-column-layout">
+
+          <div class="panel">
+
+            <div class="panel-header">
+
+              <h3>
+                Projection Inputs
+              </h3>
+
+            </div>
+
+
+            <form id="predictionForm">
+
+              <div class="form-group">
+
+                <label for="predictionInitial">
+                  Initial Investment
+                </label>
+
+                <div class="input-with-prefix">
+
+                  <span>
+                    $
+                  </span>
+
+                  <input type="number" id="predictionInitial" min="1" step="0.01" placeholder="10000" required>
+
+                </div>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="predictionContribution">
+                  Annual Contribution
+                </label>
+
+                <div class="input-with-prefix">
+
+                  <span>
+                    $
+                  </span>
+
+                  <input type="number" id="predictionContribution" min="0" step="0.01" value="0">
+
+                </div>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="predictionYears">
+                  Projection Period
+                </label>
+
+                <input type="number" id="predictionYears" min="1" max="50" value="10" required>
+
+                <small>
+                  Years
+                </small>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="predictionRisk">
+                  Risk Profile
+                </label>
+
+                <select id="predictionRisk" required>
+
+                  <option value="conservative">
+                    Conservative
+                  </option>
+
+                  <option value="moderate" selected>
+                    Moderate
+                  </option>
+
+                  <option value="aggressive">
+                    Aggressive
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <button class="primary-btn" type="submit">
+                📈 Generate Projection
+              </button>
+
+            </form>
+
+          </div>
+
+
+          <!-- PREDICTION SUMMARY -->
+
+          <div class="panel">
+
+            <div class="panel-header">
+
+              <h3>
+                Projection Summary
+              </h3>
+
+              <span class="result-status" id="predictionStatus">
+                Ready
+              </span>
+
+            </div>
+
+
+            <div id="predictionSummary" class="result-content empty-result">
+
+              <div class="empty-icon">
+                📈
+              </div>
+
+              <p>
+                Enter projection details to
+                generate the future analysis.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- FUTURE GRAPH -->
+
+        <div class="panel chart-panel">
+
+          <div class="panel-header">
+
+            <div>
+
+              <h3>
+                Projected Portfolio Growth
+              </h3>
+
+              <p>
+                Illustrative estimated portfolio
+                value over time.
+              </p>
+
+            </div>
+
+            <span class="projection-badge">
+              Illustrative
+            </span>
+
+          </div>
+
+
+          <div id="predictionChart" class="chart-container">
+
+            <div class="chart-placeholder">
+
+              <span>
+                📈
+              </span>
+
+              <p>
+                Generate an analysis to display
+                the future projection graph.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- YEAR-BY-YEAR TABLE -->
+
+        <div class="panel">
+
+          <div class="panel-header">
+
+            <div>
+
+              <h3>
+                Year-by-Year Projection
+              </h3>
+
+              <p>
+                Estimated values used to create
+                the projection graph.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="table-wrapper">
+
+            <table class="data-table" id="predictionTable">
+
+              <thead>
+
+                <tr>
+
+                  <th>
+                    Year
+                  </th>
+
+                  <th>
+                    Starting Value
+                  </th>
+
+                  <th>
+                    Contribution
+                  </th>
+
+                  <th>
+                    Estimated Growth
+                  </th>
+
+                  <th>
+                    Ending Value
+                  </th>
+
+                </tr>
+
+              </thead>
+
+
+              <tbody id="predictionTableBody">
+
+                <tr>
+
+                  <td colspan="5" class="table-empty">
+                    No projection generated yet.
+                  </td>
+
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+                 ANALYTICS CHAT
+            ================================================== -->
+
+      <section class="content-section" id="chatSection">
+
+        <div class="section-heading">
+
+          <div>
+
+            <span class="eyebrow">
+              LOCAL ANALYTICS CHAT
+            </span>
+
+            <h2>
+              Ask Investment Analytics
+            </h2>
+
+            <p>
+              Rule-based responses. No external
+              AI service is required.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="chat-panel">
+
+          <div class="chat-messages" id="chatMessages">
+
+            <div class="chat-message assistant">
+
+              <div class="chat-avatar">
+                🤖
+              </div>
+
+
+              <div class="chat-bubble">
+
+                <strong>
+                  Local Analytics
+                </strong>
+
+                <p>
+                  Hello! I can help you understand
+                  portfolio allocation, risk,
+                  diversification, investment
+                  categories and future projections.
+                </p>
+
+                <p>
+                  Everything runs locally.
+                  No Groq API key is required.
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="chat-suggestions">
+
+            <button class="suggestion-btn" type="button" data-question="How should I diversify my portfolio?">
+              How should I diversify?
+            </button>
+
+
+            <button class="suggestion-btn" type="button" data-question="What is portfolio risk?">
+              What is portfolio risk?
+            </button>
+
+
+            <button class="suggestion-btn" type="button" data-question="What are the benefits of bonds?">
+              Benefits of bonds?
+            </button>
+
+
+            <button class="suggestion-btn" type="button" data-question="What is an ETF?">
+              What is an ETF?
+            </button>
+
+
+            <button class="suggestion-btn" type="button" data-question="How does compound growth work?">
+              Compound growth?
+            </button>
+
+
+            <button class="suggestion-btn" type="button"
+              data-question="How should I think about future investment projections?">
+              Future projections?
+            </button>
+
+          </div>
+
+
+          <form class="chat-input-area" id="chatForm">
+
+            <input type="text" id="chatInput" placeholder="Ask about investments, risk, diversification..."
+              autocomplete="off" required>
+
+
+            <button type="submit" class="chat-send-btn" aria-label="Send message">
+              ➤
+            </button>
+
+          </form>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+                 ANALYSIS HISTORY
+            ================================================== -->
+
+      <section class="content-section" id="historySection">
+
+        <div class="section-heading">
+
+          <div>
+
+            <span class="eyebrow">
+              ANALYSIS HISTORY
+            </span>
+
+            <h2>
+              Previous Analyses
+            </h2>
+
+            <p>
+              Your last 20 locally generated
+              analyses, newest first.
+            </p>
+
+          </div>
+
+          <button class="secondary-btn" id="clearHistoryBtn" type="button">
+            🗑️ Clear History
+          </button>
+
+        </div>
+
+        <div class="panel">
+
+          <div id="historyList" class="history-list">
+
+            <div class="empty-result">
+              <div class="empty-icon">🕘</div>
+              <p>
+                No analyses recorded yet.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- =================================================
+                 REPORTS
+            ================================================== -->
+
+      <section class="content-section" id="reportsSection">
+
+        <div class="section-heading">
+
+          <div>
+
+            <span class="eyebrow">
+              REPORTS
+            </span>
+
+            <h2>
+              Investment Reports
+            </h2>
+
+            <p>
+              Review and export your locally
+              generated analysis.
+            </p>
+
+          </div>
+
+
+          <button class="primary-btn" id="reportExportButton" type="button">
+            📥 Download Report
+          </button>
+
+        </div>
+
+
+        <div class="report-summary-grid">
+
+          <div class="report-card">
+
+            <span class="report-card-icon">
+              💼
+            </span>
+
+            <h3>
+              Portfolio
+            </h3>
+
+            <p id="reportPortfolioStatus">
+              No portfolio analysis yet.
+            </p>
+
+          </div>
+
+
+          <div class="report-card">
+
+            <span class="report-card-icon">
+              ⚠️
+            </span>
+
+            <h3>
+              Risk
+            </h3>
+
+            <p id="reportRiskStatus">
+              No risk evaluation yet.
+            </p>
+
+          </div>
+
+
+          <div class="report-card">
+
+            <span class="report-card-icon">
+              🔎
+            </span>
+
+            <h3>
+              Screener
+            </h3>
+
+            <p id="reportScreenerStatus">
+              No screening analysis yet.
+            </p>
+
+          </div>
+
+
+          <div class="report-card">
+
+            <span class="report-card-icon">
+              📈
+            </span>
+
+            <h3>
+              Projection
+            </h3>
+
+            <p id="reportPredictionStatus">
+              No future projection yet.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="panel">
+
+          <div class="panel-header">
+
+            <h3>
+              Report Preview
+            </h3>
+
+          </div>
+
+
+          <pre id="reportPreview" class="report-preview">No report data available yet.</pre>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+                 FOOTER
+            ================================================== -->
+
+      <footer class="app-footer">
+
+        <div>
+
+          <strong>
+            InvestAI Local Analytics
+          </strong>
+
+          <span>
+            Educational investment analysis only.
+          </span>
+
+        </div>
+
+
+        <div class="footer-status">
+
+          <span class="status-dot"></span>
+
+          <span>
+            No API • No Groq • Local Storage
+          </span>
+
+        </div>
+
+      </footer>
+
+    </main>
+
+  </div>
+
+
+  <!-- =========================================================
+         TOAST
+    ========================================================== -->
+
+  <div id="toast" class="toast" role="status" aria-live="polite">
+
+    <span id="toastIcon">
+      ✓
+    </span>
+
+    <span id="toastMessage">
+      Done
+    </span>
+
+  </div>
+
+
+  <!-- =========================================================
+         CONFIRMATION MODAL
+    ========================================================== -->
+
+  <div class="modal-overlay" id="confirmModal" aria-hidden="true">
+
+    <div class="modal">
+
+      <div class="modal-icon">
+        ⚠️
+      </div>
+
+
+      <h3>
+        Clear Saved Data?
+      </h3>
+
+
+      <p>
+        This will remove your saved portfolio,
+        risk analysis, screener results,
+        future projections and dashboard data.
+      </p>
+
+
+      <div class="modal-actions">
+
+        <button class="secondary-btn" id="cancelClearBtn" type="button">
+          Cancel
+        </button>
+
+
+        <button class="danger-btn" id="confirmClearBtn" type="button">
+          Clear Data
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+  <!-- Help & Chat -->
+  <button id="helpChatButton" class="help-chat-button" type="button">
+    💬 Help
+  </button>
+
+  <div id="helpChatPanel" class="help-chat-panel" aria-hidden="true">
+    <div class="help-chat-header">
+      <div>
+        <strong>Investment Help</strong>
+        <span>Dashboard assistant</span>
+      </div>
+
+      <button id="closeHelpChat" type="button">×</button>
+    </div>
+
+    <div id="helpChatMessages" class="help-chat-messages">
+      <div class="chat-message assistant">
+        Hello! 👋 I can help you understand your portfolio analysis,
+        risk score, future projection, and reports.
+      </div>
+    </div>
+
+    <div class="help-quick-actions">
+      <button type="button" data-help-question="How does portfolio analysis work?">
+        Portfolio analysis
+      </button>
+
+      <button type="button" data-help-question="What does my risk score mean?">
+        Risk score
+      </button>
+
+      <button type="button" data-help-question="How does the future projection graph work?">
+        Future projection
+      </button>
+
+      <button type="button" data-help-question="How can I export my report?">
+        Export report
+      </button>
+    </div>
+
+    <form id="helpChatForm" class="help-chat-input">
+      <input id="helpChatInput" type="text" placeholder="Ask for help..." autocomplete="off" />
+      <button type="submit">➤</button>
+    </form>
+  </div>
+
+
+  <!-- =========================================================
+         JAVASCRIPT
+    ========================================================== -->
+
+  <script src="dashboard.js?v=2"></script>
+
+</body>
+
+</html>
