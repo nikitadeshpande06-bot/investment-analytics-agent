@@ -268,8 +268,17 @@ const sectionMap = {
     screener:
         "screenerSection",
 
+    markets:
+        "marketsSection",
+
+    watchlist:
+        "watchlistSection",
+
     prediction:
         "predictionSection",
+
+    global:
+        "globalSection",
 
     chat:
         "chatSection",
@@ -302,9 +311,24 @@ const pageTitles = {
         "Explore investment categories."
     ],
 
+    markets: [
+        "Global Markets",
+        "World stock markets, exchanges and indices."
+    ],
+
+    watchlist: [
+        "Watchlist",
+        "Track stocks from any market."
+    ],
+
     prediction: [
         "Future Projection",
         "Visualize illustrative investment growth."
+    ],
+
+    global: [
+        "Global Markets",
+        "World indices, global stock lookup, watchlist and currency conversion."
     ],
 
     chat: [
@@ -5689,7 +5713,8 @@ function renderHistory() {
         portfolio: "💼",
         risk: "⚠️",
         screener: "🔎",
-        prediction: "📈"
+        prediction: "📈",
+        chat: "💬"
     };
 
     container.innerHTML = items
@@ -5881,7 +5906,86 @@ function getLocalAnswer(question) {
         return "The Market Screener section lets you select asset classes, sectors and themes, then shows a rule-based breakdown of each category's risk profile and characteristics.";
     }
 
-    return "I'm a local rule-based assistant, so I know investment topics best. Try asking about diversification, portfolio risk, bonds, ETFs, compound growth, future projections, inflation or rebalancing. You can also use the sections in the sidebar for full analysis.";
+    /* Types / kinds / categories of investments and asset classes */
+    if (has("types of investment", "type of investment", "investment types", "types of invest", "kinds of investment", "investment options", "what can i invest", "asset class")) {
+        return "The main types of investments are:\n\n" +
+            "1. Stocks (Equities) - ownership shares in companies; highest long-term growth potential but volatile.\n" +
+            "2. Bonds - loans to governments/companies; steady income, lower risk than stocks.\n" +
+            "3. Mutual Funds & ETFs - baskets of securities; instant diversification and low fees.\n" +
+            "4. Real Estate & REITs - property exposure with dividend income.\n" +
+            "5. Commodities & Gold - inflation hedges, no income but store of value.\n" +
+            "6. Cash Equivalents - savings, money-market funds, T-bills; very safe, low return.\n" +
+            "7. Crypto - highly volatile, speculative; keep it to a small slice.\n" +
+            "8. Alternatives - private equity, hedge funds, crowdfunding.\n\n" +
+            "Most investors combine several of these based on their risk tolerance and time horizon. Try the Portfolio Builder or Market Screener sections to see how each fits a plan.";
+    }
+
+    /* Generic question patterns -> give a structured, helpful answer instead of a refusal */
+    if (has("how ", "what ", "why ", "when ", "which ", "should i", "explain", "difference")) {
+        return "Here's how I'd think about that:\n\n" +
+            "• If it's about WHERE to invest - start with broad, diversified assets (index ETFs) and match the mix to your risk tolerance and time horizon.\n" +
+            "• If it's about HOW MUCH risk - the key drivers are your time horizon, income stability and how you'd react to a 20% drop.\n" +
+            "• If it's about WHEN - time in the market beats timing it; compound growth makes early, consistent investing the strongest lever.\n\n" +
+            "For a concrete answer, tell me more (e.g. your budget, horizon or goal) and I'll be specific. You can also run the Portfolio Builder, Risk Evaluator or Future Projection sections in the sidebar.";
+    }
+
+    /* Final fallback: still helpful, never a flat refusal */
+    return "Great question. In general:\n\n" +
+        "• Start with an emergency fund (3-6 months of expenses) in cash.\n" +
+        "• Core: low-cost, diversified ETFs or index funds across stocks and bonds.\n" +
+        "• Match your stock/bond split to your time horizon - longer horizon allows more stocks.\n" +
+        "• Rebalance once a year and keep costs low; costs compound too.\n" +
+        "• Speculative assets (crypto, single hot stocks) only in small slices you can afford to lose.\n\n" +
+        "Ask me to go deeper on any of these - stocks, bonds, ETFs, diversification, risk, compound growth, projections, inflation or rebalancing - or use the sidebar sections for a full analysis.";
+}
+
+/* ============================================================
+   INVESTMENT TOPIC GUARD
+   The chat should only answer investment / finance questions.
+   ============================================================ */
+
+const INVESTMENT_KEYWORDS = [
+    // asset classes & products
+    "stock", "stocks", "share", "shares", "equity", "equities",
+    "bond", "bonds", "etf", "etfs", "mutual fund", "index fund",
+    "reit", "reits", "commodit", "gold", "silver", "crypto",
+    "bitcoin", "btc", "ethereum", "eth", "satoshi", "token",
+    "option", "options", "futures", "forex", "currency trading",
+    "cash equivalent", "money market", "treasury", "t-bill",
+    "hedge fund", "private equity", "crowdfunding",
+    // portfolio concepts
+    "portfolio", "diversif", "allocation", "asset allocation",
+    "rebalanc", "position", "holding", "holdings", "exposure",
+    "hedge", "hedging", "dollar cost", "dca", "lump sum",
+    // risk & metrics
+    "risk", "volatil", "beta", "sharpe", "drawdown", "var ",
+    "standard deviation", "correlation", "diversification risk",
+    "risk tolerance", "risk profile", "risk score",
+    // returns & growth
+    "return", "returns", "roi", "cagr", "compound", "compounding",
+    "interest", "dividend", "dividends", "yield", "capital gain",
+    "capital gains", "profit", "loss", "appreciation",
+    // analysis & strategy
+    "invest", "investor", "investing", "investment", "investments",
+    "trading", "trade", "trader", "bull", "bear", "bullish",
+    "bearish", "market", "markets", "screener", "screening",
+    "valuation", "p/e", "pe ratio", "earnings", "fundamental",
+    "technical analysis", "chart pattern", "momentum",
+    "value investing", "growth investing", "index",
+    "budget", "saving", "savings", "emergency fund", "net worth",
+    "retirement", "401k", "401(k)", "ira", "roth", "pension",
+    "financial goal", "financial plan", "wealth", "passive income",
+    "inflation", "recession", "interest rate", "fed", "tax",
+    "taxes", "tax-advantaged", "liquidity", "margin", "leverage",
+    "broker", "brokerage", "diversified", "allocation strategy"
+];
+
+function isInvestmentRelated(text) {
+    const normalized =
+        " " + String(text || "").toLowerCase() + " ";
+
+    return INVESTMENT_KEYWORDS
+        .some(keyword => normalized.includes(keyword));
 }
 
 async function askQuestion(question) {
@@ -5891,6 +5995,12 @@ async function askQuestion(question) {
     if (!cleanQuestion) {
         return "Please enter a question.";
     }
+
+    /*
+     * Answer everything. Investment questions get detailed
+     * local answers; anything else is still answered helpfully
+     * (and the AI server handles general questions too).
+     */
 
     /*
      * Try the local Node.js chat server
@@ -6170,41 +6280,41 @@ function restoreChat() {
         return;
     }
 
-    messages.innerHTML = "";
+    /*
+     * Chat always opens fresh. Any conversation saved from a
+     * previous session is moved into the History section
+     * (one entry per question/answer pair) instead of being
+     * re-rendered inside the chat window.
+     */
+    if (Array.isArray(state.chat) && state.chat.length) {
+        for (let i = 0; i < state.chat.length; i++) {
+            const msg = state.chat[i];
 
-    if (
-        !Array.isArray(state.chat) ||
-        state.chat.length === 0
-    ) {
-        addChatMessage(
-            "assistant",
-            "Hello! Ask me anything. I can discuss investments, finance, programming, technology, education, science, mathematics, general knowledge, and many other topics.",
-            false
-        );
+            if (!msg || !msg.content) continue;
 
-        return;
+            if (msg.role === "user") {
+                const answer = state.chat[i + 1];
+                recordHistory(
+                    "chat",
+                    msg.content,
+                    answer && answer.content
+                        ? answer.content
+                        : ""
+                );
+                i++; // skip the paired answer
+            }
+        }
+
+        state.chat = [];
+        saveState();
     }
 
-    state.chat.forEach(
-        message => {
-            if (
-                !message ||
-                !message.content
-            ) {
-                return;
-            }
+    messages.innerHTML = "";
 
-            const role =
-                message.role === "user"
-                    ? "user"
-                    : "assistant";
-
-            addChatMessage(
-                role,
-                message.content,
-                false
-            );
-        }
+    addChatMessage(
+        "assistant",
+        "Hello! Ask me anything. I can discuss investments, finance, programming, technology, education, science, mathematics, general knowledge, and many other topics.",
+        false
     );
 }
 
@@ -6819,3 +6929,120 @@ function updateReport() {
         console.error("Report update failed:", error);
     }
 }
+
+/* ============================================================
+   HELP CHAT WIDGET
+   ============================================================ */
+
+(function () {
+    const helpButton = document.getElementById("helpChatButton");
+    const helpPanel = document.getElementById("helpChatPanel");
+    const closeButton = document.getElementById("closeHelpChat");
+    const messagesBox = document.getElementById("helpChatMessages");
+    const helpForm = document.getElementById("helpChatForm");
+    const helpInput = document.getElementById("helpChatInput");
+
+    if (!helpButton || !helpPanel || !messagesBox) {
+        return;
+    }
+
+    const helpAnswers = {
+        "How does portfolio analysis work?":
+            "Open the Portfolio Builder, enter your budget, risk tolerance, time horizon and goal, then click Build Portfolio. The app creates a suggested allocation across asset classes and shows it as a chart.",
+
+        "What does my risk score mean?":
+            "The Risk Evaluator gives a score from 0 (lowest risk) to 100 (highest risk) with a rating such as Conservative, Moderate or Aggressive. It compares your described portfolio with your stated risk tolerance and time horizon.",
+
+        "How does the future projection graph work?":
+            "The Future Projection applies an assumed annual growth rate based on your risk profile (conservative ~4%, moderate ~6%, aggressive ~8%) to your initial investment and yearly contributions, year by year. It is illustrative only, not a guarantee.",
+
+        "How can I export my report?":
+            "Click the Export Report button in the top bar, or open the Reports section and click Download Report. Your portfolio, risk, screener and projection results are saved into one text file."
+    };
+
+    function addHelpMessage(text, isUser) {
+        const message = document.createElement("div");
+        message.className = isUser
+            ? "chat-message user"
+            : "chat-message assistant";
+        message.textContent = text;
+        messagesBox.appendChild(message);
+        messagesBox.scrollTop = messagesBox.scrollHeight;
+    }
+
+    function answerQuestion(question) {
+        addHelpMessage(question, true);
+
+        setTimeout(() => {
+            const answer = helpAnswers[question];
+
+            if (answer) {
+                addHelpMessage(answer, false);
+                return;
+            }
+
+            if (
+                typeof isInvestmentRelated === "function" &&
+                !isInvestmentRelated(question)
+            ) {
+                addHelpMessage(
+                    "That's outside the dashboard docs, but the Analytics " +
+                        "Chat section (💬 in the sidebar) can answer general " +
+                        "questions. For dashboard help, try one of the quick " +
+                        "buttons below.",
+                    false
+                );
+                return;
+            }
+
+            addHelpMessage(
+                "I can help with: portfolio analysis, the risk score, " +
+                    "the future projection graph, and exporting reports. " +
+                    "Try one of the quick buttons below.",
+                false
+            );
+        }, 250);
+    }
+
+    helpButton.addEventListener("click", () => {
+        helpPanel.classList.toggle("open");
+        helpPanel.setAttribute(
+            "aria-hidden",
+            helpPanel.classList.contains("open") ? "false" : "true"
+        );
+
+        if (helpPanel.classList.contains("open") && helpInput) {
+            helpInput.focus();
+        }
+    });
+
+    if (closeButton) {
+        closeButton.addEventListener("click", () => {
+            helpPanel.classList.remove("open");
+            helpPanel.setAttribute("aria-hidden", "true");
+        });
+    }
+
+    document
+        .querySelectorAll("[data-help-question]")
+        .forEach(button => {
+            button.addEventListener("click", () => {
+                answerQuestion(button.dataset.helpQuestion);
+            });
+        });
+
+    if (helpForm && helpInput) {
+        helpForm.addEventListener("submit", event => {
+            event.preventDefault();
+
+            const question = helpInput.value.trim();
+
+            if (!question) {
+                return;
+            }
+
+            answerQuestion(question);
+            helpInput.value = "";
+        });
+    }
+})();

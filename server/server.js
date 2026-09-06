@@ -34,7 +34,7 @@ app.post("/api/chat", (req, res) => {
     try {
 
         const question =
-            String(req.body.question || "").trim();
+            String(req.body.question || req.body.message || "").trim();
 
         if (!question) {
             return res.status(400).json({

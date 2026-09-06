@@ -16,6 +16,8 @@
 
 <body>
 
+  <!-- AUTH GATE (landing + login/signup) is injected here by src/auth.js -->
+
   <!-- =========================================================
          APPLICATION
     ========================================================== -->
@@ -73,6 +75,11 @@
         </button>
 
 
+        <button class="nav-item" data-section="markets" type="button">
+          <span class="nav-icon">🌍</span>
+          <span>Global Markets</span>
+        </button>
+
         <button class="nav-item" data-section="prediction" type="button">
           <span class="nav-icon">📈</span>
           <span>Future Projection</span>
@@ -82,6 +89,11 @@
         <button class="nav-item" data-section="chat" type="button">
           <span class="nav-icon">💬</span>
           <span>Analytics Chat</span>
+        </button>
+
+        <button class="nav-item" data-section="watchlist" type="button">
+          <span class="nav-icon">⭐</span>
+          <span>Watchlist</span>
         </button>
 
         <button class="nav-item" data-section="history" type="button">
@@ -371,6 +383,23 @@
           </button>
 
 
+          <button class="quick-action-card" data-section="markets" type="button">
+
+            <span class="quick-icon">
+              🌍
+            </span>
+
+            <strong>
+              Global Markets
+            </strong>
+
+            <small>
+              Explore world exchanges & indices.
+            </small>
+
+          </button>
+
+
           <button class="quick-action-card" data-section="prediction" type="button">
 
             <span class="quick-icon">
@@ -400,6 +429,23 @@
 
             <small>
               Get local rule-based insights.
+            </small>
+
+          </button>
+
+
+          <button class="quick-action-card" data-section="watchlist" type="button">
+
+            <span class="quick-icon">
+              ⭐
+            </span>
+
+            <strong>
+              Watchlist
+            </strong>
+
+            <small>
+              Track stocks from any market.
             </small>
 
           </button>
@@ -1508,6 +1554,341 @@
 
 
       <!-- =================================================
+                 INVESTMENT OPTIONS
+            ================================================== -->
+
+      <section class="content-section" id="optionsSection">
+
+        <div class="section-heading">
+
+          <div>
+
+            <span class="eyebrow">
+              INVESTMENT OPTIONS
+            </span>
+
+            <h2>
+              Types of Investments
+            </h2>
+
+            <p>
+              Compare different investment types by risk,
+              return potential, liquidity and time horizon.
+            </p>
+
+          </div>
+
+        </div>
+
+        <!-- RISK FILTER -->
+
+        <div class="options-filter" id="optionsFilter">
+
+          <button class="filter-btn active" data-risk="all" type="button">
+            All Types
+          </button>
+
+          <button class="filter-btn" data-risk="low" type="button">
+            🟢 Low Risk
+          </button>
+
+          <button class="filter-btn" data-risk="medium" type="button">
+            🟡 Medium Risk
+          </button>
+
+          <button class="filter-btn" data-risk="high" type="button">
+            🔴 High Risk
+          </button>
+
+        </div>
+
+        <!-- OPTIONS GRID -->
+
+        <div class="features-grid" id="optionsGrid"></div>
+
+        <div id="optionsNoResults" class="empty-result" hidden>
+          <div class="empty-icon">🧩</div>
+          <p>No investment types match this filter.</p>
+        </div>
+
+        <!-- DETAIL PANEL -->
+
+        <div class="panel" id="optionDetailPanel" hidden>
+
+          <div class="panel-header">
+
+            <div>
+
+              <h3 id="optionDetailTitle">
+                Investment Detail
+              </h3>
+
+              <p id="optionDetailSubtitle">
+              </p>
+
+            </div>
+
+            <button class="secondary-btn" id="optionDetailClose" type="button">
+              ✕ Close
+            </button>
+
+          </div>
+
+          <div id="optionDetailBody" class="result-content">
+          </div>
+
+        </div>
+
+        <div class="notice-card">
+
+          <span class="notice-icon">
+            ℹ️
+          </span>
+
+          <div>
+
+            <strong>
+              Educational Reference
+            </strong>
+
+            <p>
+              Return ranges are typical long-term, illustrative figures —
+              not promises. Every investment can lose value. Match your
+              choices to your risk tolerance, time horizon and local tax
+              rules, and consider speaking to a licensed advisor.
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- =================================================
+                 GLOBAL MARKETS
+            ================================================== -->
+
+      <section class="content-section" id="marketsSection">
+
+        <div class="gm-hero">
+
+          <div class="gm-hero-copy">
+
+            <span class="eyebrow">
+              🌍 GLOBAL MARKETS
+            </span>
+
+            <h2>
+              World Stock Markets <em>&</em> Indices
+            </h2>
+
+            <p>
+              Explore major exchanges, benchmark indices and market
+              mechanics across every continent — from the NYSE to the JSE.
+            </p>
+
+            <input type="search" id="marketsSearch" class="market-search"
+              placeholder="Search exchange or country... (e.g. India, Nifty, Nikkei)">
+
+          </div>
+
+          <div class="gm-stats" aria-label="Coverage summary">
+
+            <div class="gm-stat">
+              <span class="gm-stat-value" id="gmStatMarkets">18</span>
+              <span class="gm-stat-label">Markets</span>
+            </div>
+
+            <div class="gm-stat">
+              <span class="gm-stat-value">6</span>
+              <span class="gm-stat-label">Regions</span>
+            </div>
+
+            <div class="gm-stat">
+              <span class="gm-stat-value">24/7</span>
+              <span class="gm-stat-label">Trading Hours</span>
+            </div>
+
+            <div class="gm-stat">
+              <span class="gm-stat-value">100+</span>
+              <span class="gm-stat-label">Indices</span>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="gm-filters" role="tablist" aria-label="Filter markets by region">
+
+          <button class="gm-chip is-active" type="button" data-region-filter="">All</button>
+
+          <button class="gm-chip" type="button" data-region-filter="Americas">🌎 Americas</button>
+
+          <button class="gm-chip" type="button" data-region-filter="Europe">🇪🇺 Europe</button>
+
+          <button class="gm-chip" type="button" data-region-filter="Asia">🌏 Asia</button>
+
+          <button class="gm-chip" type="button" data-region-filter="Asia-Pacific">🌊 Asia-Pacific</button>
+
+          <button class="gm-chip" type="button" data-region-filter="Middle East">🕌 Middle East</button>
+
+          <button class="gm-chip" type="button" data-region-filter="Africa">🌍 Africa</button>
+
+          <button class="gm-chip" type="button" data-region-filter="Concepts">💡 Concepts</button>
+
+        </div>
+
+        <div class="features-grid" id="marketsGrid">
+
+          <div class="feature-card market-card" data-keywords="usa america nyse nasdaq dow sp500 s&p"
+            data-region="Americas">
+            <span>🇺🇸</span>
+            <h4>United States</h4>
+            <p><b>Exchanges:</b> NYSE, NASDAQ. <b>Indices:</b> Dow Jones, S&P 500, NASDAQ Composite. The world's largest
+              market — home to Apple, Microsoft, Amazon and thousands more.</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="india nse bse sensex nifty mumbai" data-region="Asia">
+            <span>🇮🇳</span>
+            <h4>India</h4>
+            <p><b>Exchanges:</b> NSE, BSE. <b>Indices:</b> NIFTY 50, SENSEX. One of the fastest-growing major economies
+              — Reliance, TCS, HDFC Bank, Infosys and more.</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="uk britain london lse ftse" data-region="Europe">
+            <span>🇬🇧</span>
+            <h4>United Kingdom</h4>
+            <p><b>Exchanges:</b> London Stock Exchange (LSE). <b>Indices:</b> FTSE 100, FTSE 250. Strong in banking,
+              energy (Shell, BP) and consumer giants (Unilever).</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="japan tokyo tse nikkei topix" data-region="Asia">
+            <span>🇯🇵</span>
+            <h4>Japan</h4>
+            <p><b>Exchanges:</b> Tokyo Stock Exchange. <b>Indices:</b> Nikkei 225, TOPIX. Home to Toyota, Sony, Nintendo
+              and a deep technology & auto sector.</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="china shanghai shenzhen hkex hong kong csi"
+            data-region="Asia">
+            <span>🇨🇳</span>
+            <h4>China & Hong Kong</h4>
+            <p><b>Exchanges:</b> Shanghai, Shenzhen, HKEX. <b>Indices:</b> CSI 300, Hang Seng. Huge manufacturing and
+              tech base — Tencent, Alibaba, CATL.</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="germany frankfurt dax europe eurozone"
+            data-region="Europe">
+            <span>🇩🇪</span>
+            <h4>Germany</h4>
+            <p><b>Exchanges:</b> Frankfurt (Deutsche Börse). <b>Index:</b> DAX 40. Industrial powerhouse — SAP, Siemens,
+              BMW, Volkswagen.</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="france paris euronext cac europe" data-region="Europe">
+            <span>🇫🇷</span>
+            <h4>France & Euronext</h4>
+            <p><b>Exchanges:</b> Euronext Paris (pan-European). <b>Index:</b> CAC 40. Luxury (LVMH), aerospace (Airbus)
+              and energy (TotalEnergies).</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="canada toronto tsx" data-region="Americas">
+            <span>🇨🇦</span>
+            <h4>Canada</h4>
+            <p><b>Exchanges:</b> Toronto Stock Exchange (TSX). <b>Index:</b> S&P/TSX Composite. Rich in banks, energy
+              and mining resources.</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="australia asx sydney pacific" data-region="Asia-Pacific">
+            <span>🇦🇺</span>
+            <h4>Australia</h4>
+            <p><b>Exchanges:</b> Australian Securities Exchange (ASX). <b>Index:</b> S&P/ASX 200. Strong mining (BHP),
+              banks and healthcare.</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="south korea korea kospi seoul samsung"
+            data-region="Asia-Pacific">
+            <span>🇰🇷</span>
+            <h4>South Korea</h4>
+            <p><b>Exchanges:</b> Korea Exchange (KRX). <b>Indices:</b> KOSPI, KOSDAQ. Semiconductors and tech — Samsung,
+              SK Hynix, Hyundai.</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="brazil sao paulo b3 latin america bovespa"
+            data-region="Americas">
+            <span>🇧🇷</span>
+            <h4>Brazil</h4>
+            <p><b>Exchanges:</b> B3 (São Paulo). <b>Index:</b> Ibovespa. Latin America's largest market — Petrobras,
+              Vale, Itaú.</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="saudi arabia tadawul middle east gulf dubai uae"
+            data-region="Middle East">
+            <span>🇸🇦</span>
+            <h4>Middle East</h4>
+            <p><b>Exchanges:</b> Saudi Tadawul, Dubai DFM, Abu Dhabi ADX, Qatar. <b>Index:</b> TASI. Energy giants like
+              Saudi Aramco, plus banking and real estate.</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="south africa jse johannesburg africa"
+            data-region="Africa">
+            <span>🇿🇦</span>
+            <h4>South Africa</h4>
+            <p><b>Exchanges:</b> Johannesburg Stock Exchange (JSE). <b>Index:</b> JSE All Share. Mining, finance and
+              telecoms across the African continent.</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="singapore sgx straits times asia"
+            data-region="Asia-Pacific">
+            <span>🇸🇬</span>
+            <h4>Singapore</h4>
+            <p><b>Exchanges:</b> Singapore Exchange (SGX). <b>Index:</b> Straits Times Index (STI). A Southeast Asian
+              financial hub with strong REITs.</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="adr gdr depositary receipt foreign shares"
+            data-region="Concepts">
+            <span>📄</span>
+            <h4>ADRs & GDRs</h4>
+            <p>American/Global Depositary Receipts let you buy foreign companies (e.g. Infosys, Toyota) on your home
+              exchange without opening a foreign brokerage account.</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="currency risk forex fx exchange rate"
+            data-region="Concepts">
+            <span>💱</span>
+            <h4>Currency Risk</h4>
+            <p>Investing abroad means returns move with exchange rates too. A strong home currency can reduce your
+              foreign gains — diversify across currencies to soften this.</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="trading hours sessions market open close time"
+            data-region="Concepts">
+            <span>🕒</span>
+            <h4>Trading Hours</h4>
+            <p>Markets open at different local times (e.g. NYSE 9:30 ET, NSE 9:15 IST, LSE 8:00 GMT), so global
+              investing gives you nearly round-the-clock opportunities.</p>
+          </div>
+
+          <div class="feature-card market-card" data-keywords="etf index fund international global diversified"
+            data-region="Concepts">
+            <span>🌏</span>
+            <h4>Global ETFs</h4>
+            <p>The easiest way to own the world: a single global index ETF can hold thousands of companies across every
+              region with one purchase and low fees.</p>
+          </div>
+
+        </div>
+
+        <div id="marketsNoResults" class="empty-result" hidden>
+          <div class="empty-icon">🌍</div>
+          <p>No matching market found. Try a country, exchange or index name.</p>
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
                  ANALYTICS CHAT
             ================================================== -->
 
@@ -1583,18 +1964,59 @@
             </button>
 
 
-            <button class="suggestion-btn" type="button" data-question="What are the benefits of bonds?">
-              Benefits of bonds?
-            </button>
-
-
             <button class="suggestion-btn" type="button" data-question="What is an ETF?">
               What is an ETF?
             </button>
 
 
+            <button class="suggestion-btn" type="button"
+              data-question="What are the major stock exchanges around the world?">
+              World exchanges?
+            </button>
+
+
+            <button class="suggestion-btn" type="button"
+              data-question="How can I invest in international stock markets from my country?">
+              Invest internationally?
+            </button>
+
+
+            <button class="suggestion-btn" type="button"
+              data-question="What are the NIFTY 50 and SENSEX indices in India?">
+              NIFTY & SENSEX?
+            </button>
+
+
+            <button class="suggestion-btn" type="button"
+              data-question="How should I diversify across global regions and currencies?">
+              Global diversification?
+            </button>
+
+
+            <button class="suggestion-btn" type="button"
+              data-question="What are emerging markets like Brazil, Indonesia and Vietnam?">
+              Emerging markets?
+            </button>
+
+
+            <button class="suggestion-btn" type="button" data-question="What are the benefits of bonds?">
+              Benefits of bonds?
+            </button>
+
+
+            <button class="suggestion-btn" type="button" data-question="What is currency risk when investing globally?">
+              Currency risk?
+            </button>
+
+
             <button class="suggestion-btn" type="button" data-question="How does compound growth work?">
               Compound growth?
+            </button>
+
+
+            <button class="suggestion-btn" type="button"
+              data-question="What is an ADR and how does it let me buy foreign shares?">
+              What is an ADR?
             </button>
 
 
@@ -1617,6 +2039,288 @@
             </button>
 
           </form>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+                 WATCHLIST / STOCK LOOKUP
+            ================================================== -->
+
+      <section class="content-section" id="watchlistSection">
+
+        <div class="section-heading">
+
+          <div>
+
+            <span class="eyebrow">
+              WATCHLIST
+            </span>
+
+            <h2>
+              Global Stock Watchlist
+            </h2>
+
+            <p>
+              Track reference profiles of stocks from
+              any country — US, India, Japan, UK, Germany
+              and more.
+            </p>
+
+          </div>
+
+        </div>
+
+        <!-- ADD STOCK FORM -->
+
+        <div class="panel">
+
+          <form id="watchlistForm">
+
+            <div class="form-grid">
+
+              <div class="form-group">
+
+                <label for="watchlistSymbol">
+                  Symbol / Ticker
+                </label>
+
+                <input type="text" id="watchlistSymbol" placeholder="Example: AAPL, RELIANCE.NS, 7203.T, SAP.DE"
+                  required>
+
+              </div>
+
+              <div class="form-group">
+
+                <label for="watchlistCountry">
+                  Country / Market
+                </label>
+
+                <select id="watchlistCountry" required>
+
+                  <option value="">
+                    Select country
+                  </option>
+
+                  <option value="US">🇺🇸 United States</option>
+
+                  <option value="India">🇮🇳 India</option>
+
+                  <option value="Japan">🇯🇵 Japan</option>
+
+                  <option value="UK">🇬🇧 United Kingdom</option>
+
+                  <option value="Germany">🇩🇪 Germany</option>
+
+                  <option value="France">🇫🇷 France</option>
+
+                  <option value="China">🇨🇳 China / Hong Kong</option>
+
+                  <option value="South Korea">🇰🇷 South Korea</option>
+
+                  <option value="Canada">🇨🇦 Canada</option>
+
+                  <option value="Australia">🇦🇺 Australia</option>
+
+                  <option value="Brazil">🇧🇷 Brazil</option>
+
+                  <option value="UAE">🇦🇪 UAE</option>
+
+                  <option value="Saudi Arabia">🇸🇦 Saudi Arabia</option>
+
+                  <option value="Singapore">🇸🇬 Singapore</option>
+
+                  <option value="South Africa">🇿🇦 South Africa</option>
+
+                  <option value="Netherlands">🇳🇱 Netherlands</option>
+
+                  <option value="Switzerland">🇨🇭 Switzerland</option>
+
+                  <option value="Other">🌍 Other</option>
+
+                </select>
+
+              </div>
+
+              <div class="form-group">
+
+                <label for="watchlistSector">
+                  Sector
+                </label>
+
+                <input type="text" id="watchlistSector" placeholder="Example: Technology, Energy...">
+
+              </div>
+
+              <div class="form-group">
+
+                <label for="watchlistPrice">
+                  Reference Price (local currency)
+                </label>
+
+                <input type="number" id="watchlistPrice" min="0" step="0.01" placeholder="0.00">
+
+              </div>
+
+              <div class="form-group">
+
+                <label for="watchlistNote">
+                  Note
+                </label>
+
+                <input type="text" id="watchlistNote" placeholder="Optional note...">
+
+              </div>
+
+            </div>
+
+            <button class="primary-btn" type="submit">
+              ⭐ Add to Watchlist
+            </button>
+
+          </form>
+
+        </div>
+
+        <!-- WATCHLIST TABLE -->
+
+        <div class="panel">
+
+          <div class="panel-header">
+
+            <div>
+
+              <h3>
+                Your Watchlist
+              </h3>
+
+              <p>
+                Saved locally, grouped by market.
+              </p>
+
+            </div>
+
+            <button class="secondary-btn" id="clearWatchlistBtn" type="button">
+              🗑️ Clear Watchlist
+            </button>
+
+          </div>
+
+          <div class="table-wrapper">
+
+            <table class="data-table">
+
+              <thead>
+
+                <tr>
+
+                  <th>
+                    Symbol
+                  </th>
+
+                  <th>
+                    Market
+                  </th>
+
+                  <th>
+                    Sector
+                  </th>
+
+                  <th>
+                    Price
+                  </th>
+
+                  <th>
+                    Note
+                  </th>
+
+                  <th>
+                    Remove
+                  </th>
+
+                </tr>
+
+              </thead>
+
+              <tbody id="watchlistTableBody">
+
+                <tr>
+
+                  <td colspan="6" class="table-empty">
+                    Your watchlist is empty. Add a stock above.
+                  </td>
+
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+        <!-- SAMPLE GLOBAL STOCKS -->
+
+        <div class="panel">
+
+          <div class="panel-header">
+
+            <div>
+
+              <h3>
+                Well-Known Global Companies
+              </h3>
+
+              <p>
+                Tap to add a reference entry to your watchlist.
+              </p>
+
+            </div>
+
+          </div>
+
+          <div class="table-wrapper">
+
+            <table class="data-table">
+
+              <thead>
+
+                <tr>
+
+                  <th>
+                    Company
+                  </th>
+
+                  <th>
+                    Symbol
+                  </th>
+
+                  <th>
+                    Country
+                  </th>
+
+                  <th>
+                    Sector
+                  </th>
+
+                  <th>
+                    Add
+                  </th>
+
+                </tr>
+
+              </thead>
+
+              <tbody id="globalStocksTableBody">
+
+              </tbody>
+
+            </table>
+
+          </div>
 
         </div>
 
@@ -1939,7 +2643,11 @@
          JAVASCRIPT
     ========================================================== -->
 
+  <script src="src/auth.js"></script>
+
   <script src="src/dashboard.js"></script>
+
+  <script src="src/global-markets.js"></script>
 
 </body>
 
