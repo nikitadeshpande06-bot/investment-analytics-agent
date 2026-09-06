@@ -2297,6 +2297,26 @@ body:not(.is-authed) .app-container { display: none; }
 
 .landing-link:hover { color: var(--primary-dark); }
 
+/* Dark / light theme toggle (landing nav + auth topbar) */
+
+.theme-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--surface);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.theme-toggle-btn:hover { border-color: var(--primary); transform: translateY(-1px); }
+
 .landing-btn-ghost,
 .landing-btn-solid {
     padding: 9px 18px;

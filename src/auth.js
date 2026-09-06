@@ -9,6 +9,26 @@
 
     var USERS_KEY = "investai_users_v1";
     var SESSION_KEY = "investai_session_v1";
+    var THEME_KEY = "investment_dashboard_theme";
+
+    /* Apply the saved theme right away so the landing/auth pages
+       match the preference chosen in the dashboard. */
+    function applyTheme() {
+        var dark = localStorage.getItem(THEME_KEY) === "dark";
+        document.body.classList.toggle("dark-mode", dark);
+        return dark;
+    }
+    applyTheme();
+
+    function toggleTheme() {
+        var dark = !document.body.classList.contains("dark-mode");
+        localStorage.setItem(THEME_KEY, dark ? "dark" : "light");
+        applyTheme();
+        document.querySelectorAll(".theme-toggle-btn").forEach(function (btn) {
+            btn.textContent = dark ? "☀️" : "🌙";
+            btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+        });
+    }
 
     /* ------------------------------------------------------------
        Session helpers
@@ -71,6 +91,7 @@
     <nav class="landing-nav">\
       <div class="landing-brand"><span class="brand-icon">📊</span><strong>InvestAI</strong></div>\
       <div class="landing-nav-actions">\
+        <button class="theme-toggle-btn landing-link" id="landingThemeBtn" type="button" aria-label="Switch to dark mode">🌙</button>\
         <button class="landing-link" id="landingLearnBtn" type="button">What\u2019s inside</button>\
         <button class="landing-btn-ghost" id="landingSigninBtn" type="button">Sign In</button>\
         <button class="landing-btn-solid" id="landingSignupBtn" type="button">Get Started</button>\
@@ -113,6 +134,7 @@
         <span class="brand-icon">📊</span><strong>InvestAI</strong>\
         <span class="auth-home-hint">← Back to Home</span>\
       </button>\
+      <button class="theme-toggle-btn auth-close" id="authThemeBtn" type="button" aria-label="Switch to dark mode">🌙</button>\
       <button class="auth-close" id="authCloseBtn" type="button" aria-label="Close and return to home">✕</button>\
     </nav>\
     <div class="auth-card">\
@@ -243,6 +265,15 @@
         document.getElementById("authCloseBtn").addEventListener("click", function () { open("landing"); });
         document.getElementById("switchToSignup").addEventListener("click", function () { open("signup"); });
         document.getElementById("switchToLogin").addEventListener("click", function () { open("login"); });
+
+        /* Dark / light theme toggle */
+        applyTheme();
+        gate.querySelectorAll(".theme-toggle-btn").forEach(function (btn) {
+            var dark = document.body.classList.contains("dark-mode");
+            btn.textContent = dark ? "☀️" : "🌙";
+            btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+            btn.addEventListener("click", toggleTheme);
+        });
 
         /* Show / hide password toggles */
         gate.querySelectorAll(".password-toggle").forEach(function (btn) {
