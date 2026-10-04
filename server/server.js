@@ -31,7 +31,34 @@ const { buildXlsx } = require("./xlsx-export");
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(cors());
+/* Permissive CORS for local dev; when CORS_ORIGINS is set (production),
+ * only those comma-separated origins may call the API. */
+const allowedOrigins = (process.env.CORS_ORIGINS || "").split(",").map(s => s.trim()).filter(Boolean);
+
+const adminToken = function adminToken() {
+    const t = process.env.ADMIN_TOKEN;
+    if (t) return t;
+    /* Legacy "investai-admin" default only in development - production
+     * requires an explicit ADMIN_TOKEN (see .env.production.example). */
+    if (process.env.NODE_ENV === "production") {
+        console.error("ADMIN_TOKEN is REQUIRED in production.");
+        return "__no_admin_access__";
+    }
+    return "investai-admin";
+};
+
+app.use(
+    cors(
+        allowedOrigins.length
+            ? {
+                  origin(origin, cb) {
+                      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+                      return cb(new Error("Origin not allowed by CORS"));
+                  }
+              }
+            : {}
+    )
+);
 app.use(express.json({ limit: "1mb" }));
 
 /* Cloud tracking — initializes investai_users / investai_activities.
@@ -781,7 +808,7 @@ app.get("/api/admin/summary", (req, res) => {
     try {
         const token = String(req.query.token || "");
 
-        if (!token || token !== (process.env.ADMIN_TOKEN || "investai-admin")) {
+        if (!token || token !== adminToken()) {
             return res.status(401).json({
                 success: false,
                 message: "Invalid admin token."
@@ -837,7 +864,7 @@ app.get("/api/admin/export", (req, res) => {
     try {
         const token = String(req.query.token || "");
 
-        if (!token || token !== (process.env.ADMIN_TOKEN || "investai-admin")) {
+        if (!token || token !== adminToken()) {
             return res.status(401).json({
                 success: false,
                 message: "Invalid admin token."

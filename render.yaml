@@ -1,0 +1,29 @@
+# ============================================================
+# Render Blueprint for the InvestAI backend (server/)
+# Root Directory: server   (Render will run `npm start` there)
+#
+# Secrets are NOT stored here — they are set in the Render
+# Dashboard (Environment tab) as real Environment Groups /
+# env vars. `sync: false` means Render prompts for the value
+# at blueprint-apply time and never commits it to git.
+# ============================================================
+services:
+  - type: web
+    name: investai-backend
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false          # Supabase Postgres connection string (set in dashboard)
+      - key: CLIENT_URL
+        sync: false          # Frontend origin (set in dashboard)
+      - key: CORS_ORIGINS
+        sync: false          # Comma-separated allowed origins (set in dashboard)
+      - key: ADMIN_TOKEN
+        sync: false          # Strong secret for admin endpoints (set in dashboard)
