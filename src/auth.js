@@ -10,6 +10,76 @@
     var USERS_KEY = "investai_users_v1";
     var SESSION_KEY = "investai_session_v1";
     var THEME_KEY = "investment_dashboard_theme";
+    var PREFS_KEY = "investai_prefs_v1";
+
+    var LANGUAGES = [
+        { code: "en", label: "English" },
+        { code: "hi", label: "हिन्दी (Hindi)" },
+        { code: "es", label: "Español (Spanish)" },
+        { code: "fr", label: "Français (French)" },
+        { code: "de", label: "Deutsch (German)" },
+        { code: "pt", label: "Português (Portuguese)" },
+        { code: "ar", label: "العربية (Arabic)" },
+        { code: "ja", label: "日本語 (Japanese)" }
+    ];
+
+    var CURRENCIES = [
+        { code: "USD", label: "USD — US Dollar ($)" },
+        { code: "INR", label: "INR — Indian Rupee (₹)" },
+        { code: "EUR", label: "EUR — Euro (€)" },
+        { code: "GBP", label: "GBP — British Pound (£)" },
+        { code: "JPY", label: "JPY — Japanese Yen (¥)" },
+        { code: "CAD", label: "CAD — Canadian Dollar (C$)" },
+        { code: "AUD", label: "AUD — Australian Dollar (A$)" },
+        { code: "SGD", label: "SGD — Singapore Dollar (S$)" },
+        { code: "AED", label: "AED — UAE Dirham" },
+        { code: "CHF", label: "CHF — Swiss Franc (Fr)" }
+    ];
+
+    function getPrefs() {
+        var prefs = readJSON(PREFS_KEY, null);
+        return (prefs && prefs.language && prefs.currency)
+            ? prefs
+            : { language: "en", currency: "USD" };
+    }
+
+    function setPrefs(language, currency) {
+        writeJSON(PREFS_KEY, { language: language, currency: currency });
+    }
+
+    function languageOptions(selected) {
+        return LANGUAGES.map(function (lang) {
+            return '<option value="' + lang.code + '"' +
+                (lang.code === selected ? " selected" : "") + ">" +
+                lang.label + "</option>";
+        }).join("");
+    }
+
+    function currencyOptions(selected) {
+        return CURRENCIES.map(function (cur) {
+            return '<option value="' + cur.code + '"' +
+                (cur.code === selected ? " selected" : "") + ">" +
+                cur.label + "</option>";
+        }).join("");
+    }
+
+    function prefsFieldsHTML() {
+        var prefs = getPrefs();
+        return '<div class="prefs-grid">' +
+            '<div>' +
+            '<label for="prefLanguage">Preferred language</label>' +
+            '<select id="prefLanguage" class="auth-select" required>' +
+            languageOptions(prefs.language) +
+            '</select>' +
+            '</div>' +
+            '<div>' +
+            '<label for="prefCurrency">Investment currency</label>' +
+            '<select id="prefCurrency" class="auth-select" required>' +
+            currencyOptions(prefs.currency) +
+            '</select>' +
+            '</div>' +
+            '</div>';
+    }
 
     /* Apply the saved theme right away so the landing/auth pages
        match the preference chosen in the dashboard. */
@@ -64,6 +134,36 @@
 
     function clearSession() {
         localStorage.removeItem(SESSION_KEY);
+    }
+
+    /* --------------------------------------------------------
+       Cloud user/activity tracking — best-effort POST to the
+       backend. Silently ignored when the server is absent, so
+       local behaviour is 100% unchanged.
+       -------------------------------------------------------- */
+    function trackUser(user, activity, detail) {
+        try {
+            var base = window.INVEST_API_BASE ||
+                (window.location.protocol.startsWith("http") &&
+                    !window.location.hostname.includes("localhost")
+                    ? window.location.origin
+                    : "http://localhost:4000");
+            fetch(base + "/api/track-user", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: user.email,
+                    name: user.name,
+                    language: user.language,
+                    currency: user.currency,
+                    activity: activity || "login",
+                    detail: detail || null
+                }),
+                keepalive: true
+            }).catch(function () { /* best-effort only */ });
+        } catch (error) {
+            /* never block sign-in */
+        }
     }
 
     /* Passwords are hashed with a simple local digest — this is a
@@ -151,6 +251,7 @@
           <button type="button" class="password-toggle" data-target="loginPassword" aria-label="Show password" aria-pressed="false">👁️</button>\
         </div>\
         <p class="auth-error" id="loginError" hidden></p>\
+        ' + prefsFieldsHTML() + '\
         <button class="auth-submit" type="submit">Sign In</button>\
         <p class="auth-switch">New here? <button type="button" class="auth-link-btn" id="switchToSignup">Create an account</button></p>\
       </form>\
@@ -167,6 +268,7 @@
           <button type="button" class="password-toggle" data-target="signupPassword" aria-label="Show password" aria-pressed="false">👁️</button>\
         </div>\
         <p class="auth-error" id="signupError" hidden></p>\
+        ' + prefsFieldsHTML() + '\
         <button class="auth-submit" type="submit">Sign Up</button>\
         <p class="auth-switch">Already registered? <button type="button" class="auth-link-btn" id="switchToLogin">Sign in instead</button></p>\
       </form>\
@@ -312,9 +414,18 @@
                 return;
             }
 
-            users[email] = { name: name, pass: hashPassword(password), createdAt: Date.now() };
+            var language = document.getElementById("prefLanguage").value;
+            var currency = document.getElementById("prefCurrency").value;
+            if (!language || !currency) {
+                showError("signupError", "Please select your language and investment currency.");
+                return;
+            }
+            setPrefs(language, currency);
+
+            users[email] = { name: name, pass: hashPassword(password), createdAt: Date.now(), language: language, currency: currency };
             writeJSON(USERS_KEY, users);
             setSession(email);
+            trackUser({ email: email, name: name, language: language, currency: currency }, "signup", "New account created");
             showApp({ email: email, name: name });
         });
 
@@ -337,7 +448,15 @@
                 return;
             }
 
+            /* Keep chosen language / currency preferences up to date */
+            var language = document.getElementById("prefLanguage").value || "en";
+            var currency = document.getElementById("prefCurrency").value || "USD";
+            setPrefs(language, currency);
+            user.language = language;
+            user.currency = currency;
+
             setSession(email);
+            trackUser({ email: email, name: user.name, language: language, currency: currency }, "login");
             showApp(user);
         });
     }
@@ -361,7 +480,11 @@
         btn.textContent = "🚪 Sign Out";
 
         btn.addEventListener("click", function () {
+            var session = getSession();
             clearSession();
+            if (session && session.email) {
+                trackUser({ email: session.email }, "logout");
+            }
             showGate("landing");
             /* make sure the app shows the dashboard again next time */
             var dashBtn = document.querySelector('.nav-item[data-section="dashboard"]');

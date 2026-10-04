@@ -231,3 +231,41 @@ decisions.
 ## 📄 License
 
 Provided as-is for educational use.
+
+---
+
+## Deployment
+
+The backend is a plain Node/Express server (no build step). The frontend is a static bundle (index.html + src/*) that talks to the backend over HTTP.
+
+### Backend (Railway / Render / Fly.io)
+
+1. Create a service from this repo; the platform will detect server/package.json and run 
+pm start.
+2. Set environment variables in the platform dashboard (**never commit them**):
+
+| Variable | Purpose |
+|---|---|
+| DATABASE_URL | Supabase Postgres connection string |
+| ADMIN_TOKEN | Secret for admin endpoints (required in production) |
+| PORT | Optional; defaults to 4000 |
+
+3. Deploy. Health check: GET /api/health returns {"status":"ok",...}.
+
+### Frontend (static hosting: Vercel / Netlify / GitHub Pages)
+
+Serve the repo root as a static site. If the backend lives on a different origin, inject the API base URL before uth.js loads, e.g. in index.html:
+
+`html
+<script>window.INVEST_API_BASE = "https://your-backend.up.railway.app";</script>
+`
+
+The API base is read from window.INVEST_API_BASE and falls back to same-origin (production) or localhost:4000 (development) — see server/server.js and src/auth.js.
+
+### CORS
+
+Set CORS_ORIGINS on the backend to your frontend origin(s) if serving the frontend from a different domain. When unset, permissive CORS is used (fine for local dev).
+
+### Supabase (database)
+
+The backend uses pg against Supabase Postgres. Set DATABASE_URL in the environment; it is read at startup. Connection uses SSL when the URL contains sslmode=require.

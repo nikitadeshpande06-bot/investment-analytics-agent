@@ -874,6 +874,50 @@ textarea {
 input::placeholder,
 textarea::placeholder { color: var(--text-muted); opacity: .85; }
 
+/* --- Custom select dropdowns (auth + forms) --- */
+.auth-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 38px;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    /* chevron drawn inline so it survives dark mode without extra assets */
+    background-image: url("data:image/svg+xml;charset=UTF-8," +
+        "%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E" +
+        "%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236b7280' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E" +
+        "%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 10px 6px;
+}
+
+.auth-select:invalid,
+.auth-select option[value="" ] { color: var(--text-muted); }
+
+.auth-select option { color: var(--text); background: var(--surface); }
+
+body.dark-mode .auth-select {
+    background-color: var(--surface-2);
+    border-color: var(--border);
+    background-image: url("data:image/svg+xml;charset=UTF-8," +
+        "%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E" +
+        "%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%239ca3af' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E" +
+        "%3C/svg%3E");
+}
+
+body.dark-mode .auth-select option { background: var(--surface-2); }
+
+.auth-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, .14);
+    outline: none;
+}
+
+.auth-select:disabled { opacity: .6; cursor: not-allowed; }
+
 input:focus,
 select:focus,
 textarea:focus {
@@ -2139,6 +2183,35 @@ textarea:focus {
     flex-shrink: 0;
 }
 
+/* --- "More detail" elaboration button --- */
+.chat-detail-btn {
+    flex-shrink: 0;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    background: var(--bg-secondary, #fff);
+    border: 1px solid var(--border-color, #e2e8f0);
+    color: var(--text-secondary, #475569);
+    white-space: nowrap;
+}
+
+.chat-detail-btn:hover {
+    border-color: var(--primary-color, #2563eb);
+    color: var(--primary-color, #2563eb);
+}
+
+body.dark-mode .chat-detail-btn {
+    background: #1e293b;
+    border-color: #334155;
+    color: #94a3b8;
+}
+
+body.dark-mode .chat-detail-btn:hover {
+    border-color: #60a5fa;
+    color: #60a5fa;
+}
+
 /* --- Status dot pulse --- */
 .status-dot {
     animation: dotPulse 2.2s ease-in-out infinite;
@@ -2670,6 +2743,70 @@ body:not(.is-authed) .app-container { display: none; }
     background: var(--surface);
 }
 
+/* --- Preferences grid (language / currency on sign-up) --- */
+.prefs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 14px;
+    margin-top: 14px;
+}
+
+.prefs-grid > div {
+    min-width: 0;
+}
+
+.prefs-grid label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-soft);
+    margin: 0 0 5px;
+}
+
+.prefs-grid .auth-select {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 34px 10px 13px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: 14px;
+    appearance: none;
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.prefs-grid .auth-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    background-color: var(--surface);
+}
+
+/* Tablet: keep two columns but tighten spacing */
+@media (max-width: 640px) {
+    .prefs-grid {
+        gap: 10px 10px;
+    }
+}
+
+/* Mobile: stack preference options full width */
+@media (max-width: 480px) {
+    .prefs-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .prefs-grid .auth-select {
+        min-height: 46px; /* larger touch target */
+        font-size: 16px;  /* prevents iOS zoom on focus */
+    }
+}
+
 .auth-error {
     margin: 12px 0 0;
     padding: 9px 12px;
@@ -3129,3 +3266,86 @@ body.dark-mode .gm-chip { background: var(--surface-2); }
     padding: 4px 10px;
     font-size: 12.5px;
 }
+
+
+/* ---------------- Settings page ---------------- */
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border, rgba(128, 128, 128, 0.2));
+}
+
+.settings-row:last-of-type { border-bottom: none; }
+
+.settings-row-text label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.settings-row-text small {
+    color: var(--muted, #888);
+}
+
+.settings-switch {
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+    width: 48px;
+    height: 26px;
+}
+
+.settings-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.settings-slider {
+    position: absolute;
+    inset: 0;
+    border-radius: 26px;
+    background: var(--border, rgba(128, 128, 128, 0.4));
+    transition: background 0.2s ease;
+    cursor: pointer;
+}
+
+.settings-slider::before {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.settings-switch input:checked + .settings-slider {
+    background: var(--primary, #4f6ef7);
+}
+
+.settings-switch input:checked + .settings-slider::before {
+    transform: translateX(22px);
+}
+
+.settings-switch input:focus-visible + .settings-slider {
+    outline: 2px solid var(--primary, #4f6ef7);
+    outline-offset: 2px;
+}
+
+.settings-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+#settingsSection h3 { margin: 0 0 10px; }
+#settingsSection .panel { margin-bottom: 16px; }

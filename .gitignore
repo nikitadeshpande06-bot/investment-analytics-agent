@@ -1,0 +1,10 @@
+server/.env
+*.env
+node_modules/
+server/node_modules/
+server/*.log
+*.xlsx
+export-test.*
+e2e-out.txt
+e2e-verify-email.txt
+server/*.err

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InvestAI — Admin Activity Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #f4f6f9; color: #1e2430; padding: 24px; }
+    h1 { font-size: 22px; margin-bottom: 4px; }
+    .sub { color: #5a6472; font-size: 13px; margin-bottom: 20px; }
+    .card { background: #fff; border: 1px solid #e3e7ee; border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; }
+    .stats { display: flex; gap: 16px; }
+    .stat { flex: 1; text-align: center; }
+    .stat strong { display: block; font-size: 26px; }
+    .stat span { color: #5a6472; font-size: 12px; }
+    h2 { font-size: 15px; margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 6px 10px; border-bottom: 1px solid #eef1f5; text-align: left; white-space: nowrap; }
+    th { color: #5a6472; font-weight: 600; background: #fafbfc; }
+    .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+    input { padding: 8px 10px; border: 1px solid #d3d9e2; border-radius: 6px; font-size: 13px; }
+    button { padding: 8px 14px; border: 1px solid #d3d9e2; border-radius: 6px; background: #fff; font-size: 13px; cursor: pointer; }
+    button.primary { background: #1a73e8; border-color: #1a73e8; color: #fff; }
+    .badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #e8f0fe; color: #1a56db; }
+    .error { color: #b3261e; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <h1>InvestAI — Admin Activity Dashboard</h1>
+  <p class="sub">Cloud user &amp; activity tracking, backed by Cloud SQL PostgreSQL.</p>
+
+  <div class="card toolbar-card">
+    <div class="toolbar">
+      <input type="password" id="token" placeholder="Admin token" autocomplete="off">
+      <button class="primary" id="loadBtn">Load</button>
+      <button id="csvBtn">⬇ Export CSV</button>
+      <button id="xlsxBtn">⬇ Export XLSX</button>
+      <span id="status"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="stats">
+      <div class="stat"><strong id="statUsers">–</strong><span>Registered users</span></div>
+      <div class="stat"><strong id="statActivities">–</strong><span>Activities (latest 200)</span></div>
+      <div class="stat"><strong id="statTracked">–</strong><span>Tracking status</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Per-user activity</h2>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>User</th><th>Activity count</th><th>Last activity</th></tr></thead>
+        <tbody id="perUserBody"><tr><td colspan="3">Load the dashboard to see data.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Latest activities</h2>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>When</th><th>User</th><th>Session</th><th>Activity</th><th>Detail</th></tr></thead>
+        <tbody id="activitiesBody"><tr><td colspan="5">Load the dashboard to see data.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Registered users</h2>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Email</th><th>Name</th><th>Language</th><th>Currency</th><th>Registered</th></tr></thead>
+        <tbody id="usersBody"><tr><td colspan="5">Load the dashboard to see data.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+<script src="config.js"></script>
+<script>
+  (function () {
+    "use strict";
+
+    var $ = function (id) { return document.getElementById(id); };
+
+    function apiBase() {
+      return window.INVEST_API_BASE ||
+        (window.location.protocol.startsWith("http") &&
+          !window.location.hostname.includes("localhost")
+          ? window.location.origin
+          : "http://localhost:4000");
+    }
+
+    function esc(v) {
+      var d = document.createElement("div");
+      d.textContent = v == null ? "" : String(v);
+      return d.innerHTML;
+    }
+
+    function fmt(v) {
+      if (!v) return "–";
+      try { return new Date(v).toLocaleString(); } catch (e) { return String(v); }
+    }
+
+    function query() { return "token=" + encodeURIComponent($("token").value.trim()); }
+
+    function load() {
+      var token = $("token").value.trim();
+      var status = $("status");
+      if (!token) {
+        status.innerHTML = '<span class="error">Enter the admin token.</span>';
+        return;
+      }
+
+      status.textContent = "Loading…";
+      fetch(apiBase() + "/api/admin/summary?" + query())
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+          if (!res.ok) {
+            status.innerHTML = '<span class="error">' + esc(res.d.message || "Failed.") + '</span>';
+            return;
+          }
+
+          $("statUsers").textContent = res.d.counts.users;
+          $("statActivities").textContent = res.d.counts.activities;
+          $("statTracked").textContent = "Active";
+          status.innerHTML = '<span class="badge">Loaded</span>';
+
+          $("perUserBody").innerHTML = res.d.perUser.map(function (u) {
+            return "<tr><td>" + esc(u.email) + "</td><td>" + u.activityCount + "</td><td>" + fmt(u.lastActivity) + "</td></tr>";
+          }).join("") || '<tr><td colspan="3">No activity yet.</td></tr>';
+
+          $("activitiesBody").innerHTML = res.d.activities.map(function (a) {
+            return "<tr><td>" + fmt(a.created_at) + "</td><td>" + esc(a.email) + "</td><td>" +
+              esc(a.session_id) + "</td><td>" + esc(a.activity) + "</td><td>" + esc(a.detail) + "</td></tr>";
+          }).join("") || '<tr><td colspan="5">No activities yet.</td></tr>';
+
+          $("usersBody").innerHTML = res.d.users.map(function (u) {
+            return "<tr><td>" + esc(u.email) + "</td><td>" + esc(u.name) + "</td><td>" +
+              esc(u.language) + "</td><td>" + esc(u.currency) + "</td><td>" + fmt(u.created_at) + "</td></tr>";
+          }).join("") || '<tr><td colspan="5">No users yet.</td></tr>';
+        })
+        .catch(function (e) {
+          status.innerHTML = '<span class="error">Could not reach server: ' + esc(e.message) + '</span>';
+        });
+    }
+
+    function download(format) {
+      var token = $("token").value.trim();
+      if (!token) { $("status").innerHTML = '<span class="error">Enter the admin token.</span>'; return; }
+      window.open(apiBase() + "/api/admin/export?format=" + format + "&" + query(), "_blank");
+    }
+
+    $("loadBtn").addEventListener("click", load);
+    $("csvBtn").addEventListener("click", function () { download("csv"); });
+    $("xlsxBtn").addEventListener("click", function () { download("xlsx"); });
+    $("token").addEventListener("keydown", function (e) { if (e.key === "Enter") load(); });
+  })();
+</script>
+</body>
+</html>
