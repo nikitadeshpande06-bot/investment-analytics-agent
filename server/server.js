@@ -803,6 +803,17 @@ app.get("/", (req, res) => {
 
 app.use("/src", express.static(path.join(ROOT, "src")));
 
+/* Serve the Admin Board page (same origin as the admin APIs). */
+app.get("/admin", (req, res) => {
+    res.sendFile(path.join(ROOT, "admin.html"));
+});
+
+/* Also serve /admin.html directly using the same file. */
+app.get("/admin.html", (req, res) => {
+    res.sendFile(path.join(ROOT, "admin.html"));
+});
+
+
 
 app.get("/api/admin/summary", (req, res) => {
     try {
