@@ -81,6 +81,9 @@
             '</div>';
     }
 
+    var signupFormEl = null;
+    var loginFormEl = null;
+
     /* Apply the saved theme right away so the landing/auth pages
        match the preference chosen in the dashboard. */
     function applyTheme() {
@@ -286,6 +289,8 @@
         wrapper.innerHTML = gateHTML();
         var gate = wrapper.firstElementChild;
         document.body.insertBefore(gate, document.body.firstChild);
+        loginFormEl = document.getElementById("loginForm");
+        signupFormEl = document.getElementById("signupForm");
         return gate;
     }
 
@@ -414,8 +419,9 @@
                 return;
             }
 
-            var language = document.getElementById("prefLanguage").value;
-            var currency = document.getElementById("prefCurrency").value;
+            var signupForm = document.getElementById("signupForm");
+            var language = signupFormEl.querySelector("#prefLanguage").value;
+            var currency = signupFormEl.querySelector("#prefCurrency").value;
             if (!language || !currency) {
                 showError("signupError", "Please select your language and investment currency.");
                 return;
@@ -448,9 +454,13 @@
                 return;
             }
 
-            /* Keep chosen language / currency preferences up to date */
-            var language = document.getElementById("prefLanguage").value || "en";
-            var currency = document.getElementById("prefCurrency").value || "USD";
+            /* Keep chosen language / currency preferences up to date.
+             * Read from the form the user actually submitted (the gate
+             * renders the same selects in both forms, so a global
+             * getElementById would always see the login form's copy). */
+            var loginForm = document.getElementById("loginForm");
+            var language = loginFormEl.querySelector("#prefLanguage").value || "en";
+            var currency = loginFormEl.querySelector("#prefCurrency").value || "USD";
             setPrefs(language, currency);
             user.language = language;
             user.currency = currency;
