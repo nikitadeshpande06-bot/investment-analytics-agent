@@ -1,11 +1,16 @@
-# 📊 InvestAI — Investment Analyst MCP
+# 📊 InvestAI — Investment Analyst Dashboard & Backend
 
-A **fully local** investment analytics dashboard and MCP (Model Context Protocol) server.
-Build portfolios, evaluate risk, screen investment categories and generate illustrative
-future projections — **100% in your browser, no API keys required** (no Groq, no cloud AI).
+InvestAI is a production web application consisting of a single-page investment
+analytics dashboard (auth-gated), a Node.js/Express backend with a rule-based
+investment chatbot and analysis engine, and a Supabase (PostgreSQL) database for
+user and activity persistence. It also ships an MCP server exposing the same
+rule-based analysis tools to MCP clients.
 
 > ⚠️ **Educational purposes only.** This is not personalized financial advice. All
 > investing involves risk, including possible loss of principal.
+
+**Production URL:** https://investai-backend-production-8cbd.up.railway.app
+**Admin Board:** https://investai-backend-production-8cbd.up.railway.app/admin
 
 ---
 
@@ -23,6 +28,14 @@ future projections — **100% in your browser, no API keys required** (no Groq, 
 | 💡 | **Help Chat Widget** | Floating assistant that explains dashboard features |
 | 🌙 | **Dark / Light Theme** | Toggleable theme, persisted between sessions |
 | 📱 | **Responsive** | Desktop, tablet and mobile layouts |
+| 🔐 | **Auth Gate** | Signup / login / logout with language + currency preferences |
+| 💱 | **10 Currencies** | USD, INR, EUR, GBP, JPY, CAD, AUD, SGD, AED, CHF with locale-aware formatting |
+| 🛡 | **Admin Board** | Token-protected users/activities dashboard with CSV + genuine XLSX export |
+| 📊 | **Activity Tracking** | Server-side user upsert + login/logout/analyze events in Supabase |
+
+See **[USER-GUIDE.md](USER-GUIDE.md)** for end-user instructions, **[ADMIN-GUIDE.md](ADMIN-GUIDE.md)**
+for administrator instructions, and **[FINAL-TEST-REPORT.md](FINAL-TEST-REPORT.md)** for the
+latest production regression results.
 
 ---
 
@@ -73,6 +86,105 @@ The app is split into two independent layers that work together — or fully apa
 │              └─────────────────────────────────────┘                │
 └─────────────────────────────────────────────────────────────────────┘
 ```
+
+### Production architecture (frontend / backend / database)
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                       BROWSER                              │
+│  index.html + analytics-chatboy.html + dashboard.js        │
+│   ├─ Auth gate (signup/login/logout, language + currency)  │
+│   ├─ Dashboard sections (portfolio/risk/screener/projection│
+│   │   chat/history/reports)                                │
+│   └─ localStorage: session, prefs, users, history          │
+└──────────────────────────┬─────────────────────────────────┘
+                           │ HTTPS (fetch, INVEST_API_BASE)
+                           ▼
+┌────────────────────────────────────────────────────────────┐
+│          EXPRESS BACKEND  (server/server.js)               │
+│   GET  /            → dashboard UI                         │
+│   GET  /admin       → Admin Board (token-gated APIs)       │
+│   GET  /api/health  POST /api/chat  POST /api/analyze      │
+│   POST /api/track-user                                     │
+│   GET  /api/admin/summary   GET /api/admin/export (csv|xlsx)│
+│   ├─ Rule-based analyze engine (4 modes)                   │
+│   ├─ Rule-based chat + context resolution (sessionId)      │
+│   └─ Fire-and-forget activity tracking                     │
+└──────────────────────────┬─────────────────────────────────┘
+                           │ SSL PostgreSQL
+                           ▼
+┌────────────────────────────────────────────────────────────┐
+│              SUPABASE (PostgreSQL)                         │
+│  investai_users (email, name, language, currency, created) │
+│  investai_activities (email, session_id, activity, detail) │
+└────────────────────────────────────────────────────────────┘
+```
+
+- **Frontend** — vanilla HTML/CSS/JS; stores the session and preferences in
+  `localStorage` and calls the REST API for chat, analysis and tracking.
+- **Backend** — stateless Express server (`server/server.js`); validates input,
+  runs the rule engines, persists user/activity rows.
+- **Database** — Supabase PostgreSQL with two tables: `investai_users` and
+  `investai_activities`.
+
+### Authentication flow
+
+1. **Signup** — name, email, password, language, currency → session saved as
+   `investai_session_v1` in `localStorage`; the user row is upserted to
+   `investai_users` via `POST /api/track-user`.
+2. **Login** — email + password (the login form also allows changing the
+   currency/language, applied immediately after login).
+3. **Persistence** — a refresh keeps the session and prefs; logout clears the
+   session and returns to the auth gate while keeping prefs.
+4. Regular-user auth state is client-held; the backend records user/activity
+   rows only. Admin endpoints are protected server-side by `ADMIN_TOKEN`.
+
+### Chatbot & context resolution
+
+`POST /api/chat` (`{ message, sessionId }`) is a deterministic rule-based Q&A
+engine covering bonds, stocks, ETFs, diversification, portfolio/investment risk
+and more. A `sessionId` ties messages into a conversation so follow-ups such as
+"what about their returns", "and the risks", "give me an example" resolve the
+topic and pronouns from the previous turn (`src/context-resolution.js`).
+Verified context flows include Bonds, Portfolio risk, Diversification,
+Investment risk, Stocks and ETFs chains (see FINAL-TEST-REPORT.md).
+
+### Investment analysis modes
+
+`POST /api/analyze` (`{ type, ... }`) mirrors the dashboard's rule formulas:
+
+| `type` | Required fields | Returns |
+|---|---|---|
+| `portfolio` | `budget`, `risk`, `horizon` | Diversified allocation and expected metrics |
+| `risk` | `description`, `investorRisk`, `horizon` | Risk score 0–10, rating, factors, stress tests |
+| `screener` | `risk`, `amounts` | Selected asset classes with ideas |
+| `prediction` | `initial`, `risk`, `years` | Year-by-year compound projection |
+
+Unknown types and missing fields are rejected with HTTP 400.
+
+### Currency support
+
+Signup/login offer **USD, INR, EUR, GBP, JPY, CAD, AUD, SGD, AED, CHF**. The
+selected code is stored in `investai_prefs_v1` and in the user's database row;
+`money()` renders locale-appropriate symbols/separators (`$1,234.50`,
+`₹1,234.50`, `1.234,50 €`, `￥1,234.50`, `CHF 1'234.50`, `AED 1,234.50`).
+Currency survives refresh and logout→login and can be switched at login.
+
+### User activity tracking
+
+`POST /api/track-user` upserts the user (email, name, language, currency) into
+`investai_users` and appends activity rows (`login`/`logout`/`signup`/
+`analyze_<type>` with session id and timestamp) into `investai_activities`.
+Tracking is fire-and-forget and never blocks an API response.
+
+### Admin Board, CSV & genuine XLSX export
+
+`/admin` is a token-protected dashboard. `/api/admin/summary` and
+`/api/admin/export` require the `ADMIN_TOKEN` (`?token=…`); missing or wrong
+tokens get **HTTP 401**, and the legacy `investai-admin` default is disabled
+when `NODE_ENV=production`. Exports: plain CSV (`text/csv`), or a **genuine
+OOXML .xlsx** (`format=xlsx`) built as a ZIP of XML parts with two worksheets
+(Users, Activities) — verified to open in Excel-compatible readers.
 
 ### Data flow
 
@@ -220,6 +332,15 @@ in the sidebar to reset everything.
 - **Storage:** Browser `localStorage`
 
 ---
+
+## 🔒 Security Notes
+
+- **Never commit secrets.** `.env` files, `DATABASE_URL`, `ADMIN_TOKEN`, passwords and API keys
+  must exist only in the platform's environment settings or a local, git-ignored `.env`.
+- `.env` is git-ignored; `.env.production.example` contains placeholders only.
+- The admin token must be a long random secret in production; weak defaults are rejected
+  (legacy default disabled when `NODE_ENV=production`).
+- All database access uses SSL.
 
 ## 📝 Disclaimer
 
