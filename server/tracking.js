@@ -98,10 +98,10 @@ function upsertUser(user) {
                 `INSERT INTO investai_users (email, name, language, currency)
                  VALUES ($1,$2,$3,$4)
                  ON CONFLICT (email) DO UPDATE
-                 SET name = EXCLUDED.name,
+                 SET name = COALESCE(EXCLUDED.name, investai_users.name),
                      language = COALESCE(EXCLUDED.language, investai_users.language),
                      currency = COALESCE(EXCLUDED.currency, investai_users.currency)`,
-                [user.email, user.name || user.email, user.language || null, user.currency || null]
+                 [user.email, user.name || null, user.language || null, user.currency || null]
             )
             .then(() => true)
             .catch(error => {
